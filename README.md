@@ -1,1 +1,1 @@
-# Palladio-Build-JenkinsPipeline
+# Build-JenkinsPipeline
