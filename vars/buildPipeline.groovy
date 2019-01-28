@@ -1,4 +1,4 @@
-def info() {
+def info(message) {
     echo "INFO: Test"
 }
 
