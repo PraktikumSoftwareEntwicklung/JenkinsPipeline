@@ -1,5 +1,4 @@
 def call() {
-	echo 'start Node'
 	pipeline {        
 		agent none
 
