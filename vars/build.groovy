@@ -1,5 +1,6 @@
 def call() {
 	node {        
+		echo 'start Node'
 		agent none
 
 		options {
