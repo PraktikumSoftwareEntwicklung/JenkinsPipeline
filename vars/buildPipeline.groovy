@@ -1,15 +1,11 @@
-def info(message) {
-    echo "INFO: Test"
-}
-
-def call(message) {
+def call() {
 	echo 'start Node'
-	node {        
-		//agent none
+	pipeline {        
+		agent none
 
-		//options {
-		//	timeout(time: 30, unit: 'MINUTES')
-		//}
+		options {
+			timeout(time: 30, unit: 'MINUTES')
+		}
 		stages {
 			stage('Build_Master') {
 				agent {
