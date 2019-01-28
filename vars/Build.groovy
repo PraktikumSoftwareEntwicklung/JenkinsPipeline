@@ -1,4 +1,4 @@
-def call() {
+def build() {
 	node {        
 		agent none
 
