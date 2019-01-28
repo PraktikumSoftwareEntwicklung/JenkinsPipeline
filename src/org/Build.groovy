@@ -1,6 +1,4 @@
-node {    
-    echo 'Hello world'
-    
+node {        
     agent none
 
     options {
