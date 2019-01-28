@@ -1,3 +1,7 @@
+def info(message) {
+    echo "INFO: ${message}"
+}
+
 def call() {
 	node {        
 		echo 'start Node'
