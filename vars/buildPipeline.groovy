@@ -1,3 +1,7 @@
+def info() {
+    echo "INFO: Test"
+}
+
 def call() {
 	echo 'start Node'
 	node {        
