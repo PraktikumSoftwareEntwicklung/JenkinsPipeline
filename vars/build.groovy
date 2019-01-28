@@ -1,10 +1,6 @@
-def info(message) {
-    echo "INFO: ${message}"
-}
-
 def call() {
+	echo 'start Node'
 	node {        
-		echo 'start Node'
 		agent none
 
 		options {
