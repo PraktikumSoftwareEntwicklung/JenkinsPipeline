@@ -7,9 +7,9 @@ def call(message) {
 	node {        
 		//agent none
 
-		options {
-			timeout(time: 30, unit: 'MINUTES')
-		}
+		//options {
+		//	timeout(time: 30, unit: 'MINUTES')
+		//}
 		stages {
 			stage('Build_Master') {
 				agent {
