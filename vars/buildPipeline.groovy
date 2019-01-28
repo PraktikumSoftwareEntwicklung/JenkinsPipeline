@@ -4,7 +4,7 @@ def info(message) {
 
 def call(message) {
 	echo 'start Node'
-	pipeline {        
+	node {        
 		//agent none
 
 		//options {
