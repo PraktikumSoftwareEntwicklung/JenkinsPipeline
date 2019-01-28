@@ -5,7 +5,7 @@ def info(message) {
 def call(message) {
 	echo 'start Node'
 	node {        
-		agent none
+		//agent none
 
 		options {
 			timeout(time: 30, unit: 'MINUTES')
