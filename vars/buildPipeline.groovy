@@ -2,7 +2,7 @@ def info(message) {
     echo "INFO: Test"
 }
 
-def call() {
+def call(message) {
 	echo 'start Node'
 	node {        
 		agent none
