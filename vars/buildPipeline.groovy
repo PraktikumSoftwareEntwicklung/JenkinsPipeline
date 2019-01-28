@@ -1,4 +1,4 @@
-def call() {
+def build() {
 	echo 'start Node'
 	node {        
 		agent none
