@@ -1,4 +1,4 @@
-def call(body) {
+def call() {
 	node {        
 		agent none
 
