@@ -1,1 +1,3 @@
-
+def test() {
+  echo 'test'
+}
