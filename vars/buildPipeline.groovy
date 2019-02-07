@@ -25,6 +25,7 @@ def call() {
 					stage('load_cache') {
 						steps {
 							sh 'printenv'
+							sh 'echo MASTER_PING'
 							sh 'mkdir /home/jenkinsbuild/.m2/'
 							sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
 						}
