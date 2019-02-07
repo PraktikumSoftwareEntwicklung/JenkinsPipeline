@@ -73,4 +73,17 @@ def call() {
 			}
 		}
 	}
+	post {
+		always {
+			dir("${env.WORKSPACE}@tmp") {
+				deleteDir()
+			}
+			dir("${env.WORKSPACE}@script") {
+				deleteDir()
+			}
+			dir("${env.WORKSPACE}@script@tmp") {
+				deleteDir()
+			}
+		}
+	}
 }
