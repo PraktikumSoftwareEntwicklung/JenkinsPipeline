@@ -74,7 +74,7 @@ def call() {
 		}
 		post {
 			always {
-				node {
+				node ('master') {
 					dir("${env.WORKSPACE}@tmp") {
 						deleteDir()
 					}
