@@ -42,6 +42,7 @@ def call() {
 				}
 				post {
 					always {
+						cleanWs()
 						dir("${env.WORKSPACE}@tmp") {
 						deleteDir()
 						}
@@ -85,6 +86,7 @@ def call() {
 				}
 				post {
 					always {
+						cleanWs()
 						dir("${env.WORKSPACE}@tmp") {
 						deleteDir()
 						}
