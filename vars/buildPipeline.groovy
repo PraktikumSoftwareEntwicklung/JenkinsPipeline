@@ -74,8 +74,15 @@ def call() {
 		}
 		post {
 			always {
+				cleanWs()
 				dir("${env.WORKSPACE}@tmp") {
-					deleteDir()
+				deleteDir()
+				}
+				dir("${env.WORKSPACE}@script") {
+				deleteDir()
+				}
+				dir("${env.WORKSPACE}@script@tmp") {
+				deleteDir()
 				}
 			}
 		}
