@@ -40,6 +40,20 @@ def call() {
 						}
 					}
 				}
+				post {
+					always {
+						cleanWs()
+						dir("${env.WORKSPACE}@tmp") {
+						deleteDir()
+						}
+						dir("${env.WORKSPACE}@script") {
+						deleteDir()
+						}
+						dir("${env.WORKSPACE}@script@tmp") {
+						deleteDir()
+						}
+					}
+				}
 			}
 			stage('Build_Slave') {
 				agent {
@@ -70,21 +84,21 @@ def call() {
 						}
 					}
 				}
+				post {
+					always {
+						cleanWs()
+						dir("${env.WORKSPACE}@tmp") {
+						deleteDir()
+						}
+						dir("${env.WORKSPACE}@script") {
+						deleteDir()
+						}
+						dir("${env.WORKSPACE}@script@tmp") {
+						deleteDir()
+						}
+					}
+				}				
 			}
-		}
-		post {
-			always {
-				cleanWs()
-				dir("${env.WORKSPACE}@tmp") {
-				deleteDir()
-				}
-				dir("${env.WORKSPACE}@script") {
-				deleteDir()
-				}
-				dir("${env.WORKSPACE}@script@tmp") {
-				deleteDir()
-				}
-			}
-		}
+		}		
 	}	
 }
