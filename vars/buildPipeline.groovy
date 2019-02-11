@@ -40,22 +40,6 @@ def call() {
 						}
 					}
 				}
-				post {
-					always {
-						cleanWs()
-						echo 'Clean Workspace'
-            					deleteDir() 
-						dir("${env.WORKSPACE}@tmp") {
-						deleteDir()
-						}
-						dir("${env.WORKSPACE}@script") {
-						deleteDir()
-						}
-						dir("${env.WORKSPACE}@script@tmp") {
-						deleteDir()
-						}
-					}
-				}
 			}
 			stage('Build_Slave') {
 				agent {
@@ -85,23 +69,7 @@ def call() {
 							sh 'mvn -B -DskipTests clean package'
 						}
 					}
-				}
-				post {
-					always {
-						cleanWs()
-						echo 'Clean Workspace'
-            					deleteDir() 						
-						dir("${env.WORKSPACE}@tmp") {
-						deleteDir()
-						}
-						dir("${env.WORKSPACE}@script") {
-						deleteDir()
-						}
-						dir("${env.WORKSPACE}@script@tmp") {
-						deleteDir()
-						}
-					}
-				}				
+				}						
 			}
 		}		
 	}	
