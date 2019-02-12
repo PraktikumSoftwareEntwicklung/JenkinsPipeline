@@ -10,6 +10,7 @@ def call() {
     }
     
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
+    def BuildFilesFolder = env.WORKSPACE + "/BuildResult_" + env.BUILD_ID
 
     def tasks = [:]
     def doPostProcessing = false
@@ -148,9 +149,13 @@ def call() {
 
 def deploy() {
     node {
-        sh 'docker ps'
+        sh "mkdir $BuildFilesFolder"
+        sh "docker cp $MavenContainerName:/ jenkins:$BuildFilesFolder"
+        sh "du -h $BuildFilesFolder"
+        sh "rm -rf $BuildFilesFolder"
     }
 }
+
 def cleanWorkspace(workspaceDir) {
 	dir(workspaceDir) {
 	  deleteDir()
