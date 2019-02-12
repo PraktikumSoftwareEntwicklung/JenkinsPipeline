@@ -1,6 +1,6 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
-def BuildFilesFolder = "/tmp/deleteThisFolder"
+def BuildFilesFolder = "/var/jenkins_home/workspace/deleteThisFolder"
 
 def call() {
     node {
@@ -12,7 +12,7 @@ def call() {
     }
     
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
-    BuildFilesFolder = env.WORKSPACE + "/BuildResult_" + env.BUILD_ID
+    BuildFilesFolder = env.PWD + "/BuildResult_" + env.BUILD_ID
 
     def tasks = [:]
     def doPostProcessing = false
