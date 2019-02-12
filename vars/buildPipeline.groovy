@@ -8,8 +8,8 @@ def call() {
         ).trim()
         echo outp
         sh 'echo outp'
-        sh 'docker ps'
     }
+    execute_command()
     
     pipeline {
 		/*agent any
@@ -118,7 +118,9 @@ def call() {
 }
 
 def execute_command() {
-
+    node {
+        sh 'docker ps'
+    }
 }
 /*def cleanWorkspace(workspaceDir) {
 	dir(workspaceDir) {
