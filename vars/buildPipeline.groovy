@@ -11,15 +11,16 @@ def call() {
     
     def tasks = [:]
     def doPostProcessing = false
+    def deployFinished = false
     
-    tasks["task_1"] = {
+    tasks["Jenkins_Container"] = {
         while (!doPostProcessing) {
             sleep(1)
         }
-        execute_command()
+        deploy()
     }
     
-    tasks["task_2"] = {
+    tasks["Maven_Container"] = {
         pipeline {
             agent any
             environment {
@@ -49,16 +50,21 @@ def call() {
                     stages {
                         stage('load_cache') {
                             steps {
+                                sh 'pwd'
+                                sh 'printenv'
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
-                                script {
-                                    doPostProcessing = true
-                                }
                             }
                         }
                         stage('build') {
                             steps {
                                 sh 'mvn clean verify'
+                                script {
+                                    doPostProcessing = true
+                                    while (!deployFinished) {
+                                        sleep(1)
+                                    }
+                                }
                             }
                         }
                         stage('save_cache') {
@@ -131,9 +137,9 @@ def call() {
     parallel tasks
 }
 
-def execute_command() {
+def deploy() {
     node {
-        sh 'docker ps'
+
     }
 }
 def cleanWorkspace(workspaceDir) {
