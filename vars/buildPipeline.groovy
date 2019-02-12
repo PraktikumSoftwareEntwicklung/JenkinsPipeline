@@ -18,6 +18,7 @@ def call() {
             sleep(1)
         }
         deploy()
+        deployFinished = true
     }
     
     tasks["Maven_Container"] = {
@@ -146,7 +147,6 @@ def call() {
 def deploy() {
     node {
         sh 'docker ps'
-        deployFinished = true
     }
 }
 def cleanWorkspace(workspaceDir) {
