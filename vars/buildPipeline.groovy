@@ -4,6 +4,8 @@ def call() {
     node {
         def outp = sh 'printenv'
         echo outp
+        sh 'echo outp'
+        sh 'mkdir /home/jenkinsbuild/test'
     }
     
     pipeline {
