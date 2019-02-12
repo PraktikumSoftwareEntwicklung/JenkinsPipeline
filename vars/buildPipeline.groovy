@@ -36,7 +36,7 @@ def call() {
                     agent {
                         docker {
                             image 'custom_maven:latest'
-                            args '-v /media/data/empty_maven_folder/:/root/.m2:ro -v /media/data/m2-cache/:/home/jenkinsbuild/tmp_cache -m 4G --storage-opt size=20G --network proxy'
+                            args '-v /media/data/empty_maven_folder/:/root/.m2:ro -v /media/data/m2-cache/:/home/jenkinsbuild/tmp_cache -m 4G --storage-opt size=20G --network proxy --name MyFavMavenCont'
                         }
                     }
                     when {
@@ -52,6 +52,12 @@ def call() {
                             steps {
                                 sh 'pwd'
                                 sh 'printenv'
+                                script {
+                                    doPostProcessing = true
+                                    while (!deployFinished) {
+                                        sleep(1)
+                                    }
+                                }
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
                             }
@@ -59,12 +65,12 @@ def call() {
                         stage('build') {
                             steps {
                                 sh 'mvn clean verify'
-                                script {
+                                /*script {
                                     doPostProcessing = true
                                     while (!deployFinished) {
                                         sleep(1)
                                     }
-                                }
+                                }*/
                             }
                         }
                         stage('save_cache') {
@@ -139,7 +145,8 @@ def call() {
 
 def deploy() {
     node {
-
+        sh 'docker ps'
+        deployFinished = true
     }
 }
 def cleanWorkspace(workspaceDir) {
