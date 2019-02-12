@@ -12,7 +12,7 @@ def call() {
     }
     
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
-    BuildFilesFolder = "" + env.PWD + "/BuildResult_" + env.BUILD_ID
+    BuildFilesFolder = "/var/jenkins_home/workspace/BuildResult_" + env.BUILD_ID
 
     def tasks = [:]
     def doPostProcessing = false
