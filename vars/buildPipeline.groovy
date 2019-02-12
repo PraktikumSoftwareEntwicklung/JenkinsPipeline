@@ -1,7 +1,7 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def call() {
-    def exx = this
+    final exx = this
     node {
         def outp = sh (
             script: 'printenv',
