@@ -2,6 +2,7 @@
 
 def BuildFilesFolder = "/var/jenkins_home/workspace/deleteThisFolder"
 def MavenContainerName = "Unkown_Container_Name"
+def MavenPwd = ""
 
 def call() {
     node {
@@ -60,6 +61,10 @@ def call() {
                                 sh 'pwd'
                                 sh 'printenv'
                                 script {
+                                    MavenPwd = sh (
+                                        script: 'pwd',
+                                        returnStdout: true
+                                    ).trim()
                                     doPostProcessing = true
                                     while (!deployFinished) {
                                         sleep(1)
@@ -153,8 +158,9 @@ def call() {
 def deploy() {
     node {
         sh "echo $BuildFilesFolder"
+        sh "echo $MavenPwd"
         sh "mkdir $BuildFilesFolder"
-        sh "docker cp $MavenContainerName:/ $BuildFilesFolder"
+        //sh "docker cp $MavenContainerName:/ $BuildFilesFolder"
         sh "du -h $BuildFilesFolder"
         sh "rm -rf $BuildFilesFolder"
     }
