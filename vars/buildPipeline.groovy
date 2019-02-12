@@ -1,10 +1,8 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def call() {
-    /*node {
-        sh 'printenv'
-    }*/
-    //execute_pipeline()
+    execute_pipeline()
+    
     pipeline {
 		/*agent any
 		environment {
@@ -96,12 +94,7 @@ def call() {
 				}					
 			}					
 		}
-    }
-}
-
-def execute_pipeline() {
-
-		/*post {
+        /*post {
 			always {				
 				script {
 					cleanWorkspace("${env.WORKSPACE}")
@@ -112,8 +105,14 @@ def execute_pipeline() {
 					}
 				}
 			}
-		}*/			
+		}*/	
+    }
+}
 
+def execute_pipeline() {
+    node {
+        sh 'printenv'
+    }
 }
 /*def cleanWorkspace(workspaceDir) {
 	dir(workspaceDir) {
