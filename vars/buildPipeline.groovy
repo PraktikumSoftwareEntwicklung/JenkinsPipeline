@@ -1,8 +1,10 @@
 import org.codehaus.groovy.util.ReleaseInfo
 
 def call(body) {
-    sh 'printenv'
-    execute_pipeline()
+    node {
+        sh 'printenv'
+        execute_pipeline()
+    }
 }
 
 def execute_pipeline() {
