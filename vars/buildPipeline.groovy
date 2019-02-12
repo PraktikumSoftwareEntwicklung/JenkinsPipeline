@@ -1,8 +1,10 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def call() {
-    def outp = sh 'printenv'
-    echo outp
+    node {
+        def outp = sh 'printenv'
+        echo outp
+    }
     
     pipeline {
 		/*agent any
