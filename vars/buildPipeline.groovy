@@ -1,7 +1,6 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def call() {
-    final exx = this
     node {
         def outp = sh (
             script: 'printenv',
@@ -9,7 +8,6 @@ def call() {
         ).trim()
         echo outp
     }
-    execute_command(this)
     
     def tasks = [:]
     def doPostProcessing = false
@@ -18,17 +16,16 @@ def call() {
         while (!doPostProcessing) {
             sleep(1)
         }
-        execute_command(exx)
+        execute_command()
     }
     
     tasks["task_2"] = {
         pipeline {
-            /*agent any
+            agent any
             environment {
                 workspaceMaster = ''
                 workspaceSlave = ''
-            }*/
-            agent none
+            }
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
@@ -52,7 +49,6 @@ def call() {
                     stages {
                         stage('load_cache') {
                             steps {
-                                //execute_command(exx)
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
                                 script {
@@ -117,7 +113,7 @@ def call() {
                     }					
                 }					
             }
-            /*post {
+            post {
                 always {				
                     script {
                         cleanWorkspace("${env.WORKSPACE}")
@@ -128,19 +124,19 @@ def call() {
                         }
                     }
                 }
-            }*/	
+            }
         }
     }
     
     parallel tasks
 }
 
-def execute_command(ex_env) {
-    ex_env.node {
-        ex_env.sh 'docker ps'
+def execute_command() {
+    node {
+        sh 'docker ps'
     }
 }
-/*def cleanWorkspace(workspaceDir) {
+def cleanWorkspace(workspaceDir) {
 	dir(workspaceDir) {
 	  deleteDir()
 	}
@@ -153,4 +149,4 @@ def execute_command(ex_env) {
 	dir(workspaceDir + "@script@tmp") {
 	  deleteDir()
 	}
-}*/
+}
