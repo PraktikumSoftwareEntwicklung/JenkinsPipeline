@@ -4,11 +4,8 @@ def call() {
     /*node {
         sh 'printenv'
     }*/
-    execute_pipeline()
-}
-
-def execute_pipeline() {
-	pipeline {
+    //execute_pipeline()
+    pipeline {
 		/*agent any
 		environment {
 			workspaceMaster = ''
@@ -99,6 +96,11 @@ def execute_pipeline() {
 				}					
 			}					
 		}
+    }
+}
+
+def execute_pipeline() {
+
 		/*post {
 			always {				
 				script {
@@ -111,7 +113,7 @@ def execute_pipeline() {
 				}
 			}
 		}*/			
-	}	
+
 }
 /*def cleanWorkspace(workspaceDir) {
 	dir(workspaceDir) {
