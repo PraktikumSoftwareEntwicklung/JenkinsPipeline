@@ -12,7 +12,7 @@ def call() {
     execute_command(this)
     
     def tasks = [:]
-    boolean doPostProcessing = false
+    def doPostProcessing = false
     
     tasks["task_1"] = {
         while (!doPostProcessing) {
@@ -55,7 +55,9 @@ def call() {
                                 //execute_command(exx)
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
-                                doPostProcessing = true
+                                script {
+                                    doPostProcessing = true
+                                }
                             }
                         }
                         stage('build') {
