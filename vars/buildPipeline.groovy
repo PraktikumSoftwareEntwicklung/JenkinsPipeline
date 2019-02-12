@@ -1,6 +1,11 @@
-def call() {
+def call() {	
 	pipeline {
 		agent any
+		environment {
+			workspaceMaster = ''
+			workspaceSlave = ''
+		}
+
 
 		options {
 			timeout(time: 30, unit: 'MINUTES')
@@ -40,7 +45,15 @@ def call() {
 						}
 					}
 				}
+				post {
+					always {
+						script {
+							workspaceMaster = env.WORKSPACE	
+						}
+					}
+				}
 			}
+			
 			stage('Build_Slave') {
 				agent {
 					docker {
@@ -69,22 +82,41 @@ def call() {
 							sh 'mvn -B -DskipTests clean package'
 						}
 					}
-				}						
-			}
+				}
+				post {
+					always {
+						script {
+							workspaceSlave = env.WORKSPACE							
+						}
+					}
+				}					
+			}					
 		}
 		post {
-			always {
-				cleanWs()
-				dir("${env.WORKSPACE}@tmp") {
-				  deleteDir()
-				}
-				dir("${env.WORKSPACE}@script") {
-				  deleteDir()
-				}
-				dir("${env.WORKSPACE}@script@tmp") {
-				  deleteDir()
+			always {				
+				script {
+					cleanWorkspace("${env.WORKSPACE}")
+					if(env.GIT_BRANCH == 'master') {
+						cleanWorkspace(workspaceMaster)
+					} else {
+						cleanWorkspace(workspaceSlave)
+					}
 				}
 			}
 		}			
 	}	
+}
+def cleanWorkspace(workspaceDir) {
+	dir(workspaceDir) {
+	  deleteDir()
+	}
+	dir(workspaceDir + "@tmp") {
+	  deleteDir()
+	}
+	dir(workspaceDir + "@script") {
+	  deleteDir()
+	}
+	dir(workspaceDir + "@script@tmp") {
+	  deleteDir()
+	}
 }
