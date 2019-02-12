@@ -7,7 +7,11 @@ def call(body) {
 
 def execute_pipeline() {
 	pipeline {
-		agent none
+		agent any
+		environment {
+			workspaceMaster = ''
+			workspaceSlave = ''
+		}
 
 		options {
 			timeout(time: 30, unit: 'MINUTES')
@@ -46,7 +50,15 @@ def execute_pipeline() {
 						}
 					}
 				}
+				post {
+					always {
+						script {
+							workspaceMaster = env.WORKSPACE	
+						}
+					}
+				}
 			}
+			
 			stage('Build_Slave') {
 				agent {
 					docker {
@@ -74,8 +86,41 @@ def execute_pipeline() {
 							sh 'mvn clean verify'
 						}
 					}
-				}						
-			}
+				}
+				post {
+					always {
+						script {
+							workspaceSlave = env.WORKSPACE							
+						}
+					}
+				}					
+			}					
 		}
+		post {
+			always {				
+				script {
+					cleanWorkspace("${env.WORKSPACE}")
+					if(env.GIT_BRANCH == 'master') {
+						cleanWorkspace(workspaceMaster)
+					} else {
+						cleanWorkspace(workspaceSlave)
+					}
+				}
+			}
+		}			
 	}	
+}
+def cleanWorkspace(workspaceDir) {
+	dir(workspaceDir) {
+	  deleteDir()
+	}
+	dir(workspaceDir + "@tmp") {
+	  deleteDir()
+	}
+	dir(workspaceDir + "@script") {
+	  deleteDir()
+	}
+	dir(workspaceDir + "@script@tmp") {
+	  deleteDir()
+	}
 }
