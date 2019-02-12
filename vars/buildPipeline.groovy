@@ -1,6 +1,6 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
-def call(body) {
+def call() {
     /*node {
         sh 'printenv'
     }*/
