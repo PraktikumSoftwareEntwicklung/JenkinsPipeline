@@ -1,6 +1,7 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def call() {
+    def exx = this
     node {
         def outp = sh (
             script: 'printenv',
@@ -8,7 +9,8 @@ def call() {
         ).trim()
         echo outp
     }
-    execute_command()
+    execute_command(this)
+    execute_command(exx)
     
     pipeline {
 		/*agent any
@@ -40,7 +42,7 @@ def call() {
 				stages {
 					stage('load_cache') {
 						steps {
-                            execute_command()
+                            execute_command(exx)
 							sh 'mkdir /home/jenkinsbuild/.m2/'
 							sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
 						}
@@ -117,9 +119,9 @@ def call() {
     }
 }
 
-def execute_command() {
+def execute_command(ex_env) {
     node {
-        sh 'docker ps'
+        ex_env.sh 'docker ps'
     }
 }
 /*def cleanWorkspace(workspaceDir) {
