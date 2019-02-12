@@ -1,5 +1,7 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
+def BuildFilesFolder = "/tmp/deleteThisFolder"
+
 def call() {
     node {
         def outp = sh (
@@ -10,7 +12,7 @@ def call() {
     }
     
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
-    def BuildFilesFolder = env.WORKSPACE + "/BuildResult_" + env.BUILD_ID
+    BuildFilesFolder = env.WORKSPACE + "/BuildResult_" + env.BUILD_ID
 
     def tasks = [:]
     def doPostProcessing = false
@@ -149,6 +151,7 @@ def call() {
 
 def deploy() {
     node {
+        sh "echo $BuildFilesFolder"
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:/ jenkins:$BuildFilesFolder"
         sh "du -h $BuildFilesFolder"
