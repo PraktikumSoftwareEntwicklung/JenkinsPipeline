@@ -7,7 +7,6 @@ def call() {
             returnStdout: true
         ).trim()
         echo outp
-        sh 'echo outp'
     }
     execute_command()
     
@@ -41,6 +40,7 @@ def call() {
 				stages {
 					stage('load_cache') {
 						steps {
+                            execute_command()
 							sh 'mkdir /home/jenkinsbuild/.m2/'
 							sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
 						}
