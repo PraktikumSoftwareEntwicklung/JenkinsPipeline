@@ -2,10 +2,13 @@
 
 def call() {
     node {
-        def outp = sh 'printenv'
+        def outp = sh (
+            script: 'printenv',
+            returnStdout: true
+        ).trim()
         echo outp
         sh 'echo outp'
-        sh 'mkdir /home/jenkinsbuild/test'
+        sh 'docker ps'
     }
     
     pipeline {
