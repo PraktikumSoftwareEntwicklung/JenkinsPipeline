@@ -1,7 +1,8 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def call() {
-    execute_pipeline()
+    def outp = execute_command()
+    echo outp
     
     pipeline {
 		/*agent any
@@ -109,9 +110,9 @@ def call() {
     }
 }
 
-def execute_pipeline() {
+def execute_command() {
     node {
-        sh 'printenv'
+        return sh 'printenv'
     }
 }
 /*def cleanWorkspace(workspaceDir) {
