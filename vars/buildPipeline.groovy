@@ -154,7 +154,7 @@ def deploy() {
     node {
         sh "echo $BuildFilesFolder"
         sh "mkdir $BuildFilesFolder"
-        sh "docker cp $MavenContainerName:/ jenkins:$BuildFilesFolder"
+        sh "docker cp $MavenContainerName:/ $BuildFilesFolder"
         sh "du -h $BuildFilesFolder"
         sh "rm -rf $BuildFilesFolder"
     }
