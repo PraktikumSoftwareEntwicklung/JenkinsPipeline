@@ -14,7 +14,7 @@ def call() {
     def tasks = [:]
     
     tasks["task_1"] = {
-        sleep(3000)
+        sleep(5)
         execute_command(exx)
     }
     
