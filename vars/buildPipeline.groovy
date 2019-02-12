@@ -159,7 +159,7 @@ def deploy() {
     node {
         sh "echo $BuildFilesFolder"
         sh "echo $MavenPwd"
-        MavenPwd = MavenPwd + "/"
+        MavenPwd = MavenPwd + "/."
         sh "echo $MavenPwd"
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
