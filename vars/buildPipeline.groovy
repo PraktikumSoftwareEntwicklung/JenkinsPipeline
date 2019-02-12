@@ -1,6 +1,7 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
 def BuildFilesFolder = "/var/jenkins_home/workspace/deleteThisFolder"
+def MavenContainerName = "Unkown_Container_Name"
 
 def call() {
     node {
@@ -11,7 +12,7 @@ def call() {
         echo outp
     }
     
-    def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
+    MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
     BuildFilesFolder = "/var/jenkins_home/workspace/BuildResult_" + env.BUILD_ID
 
     def tasks = [:]
