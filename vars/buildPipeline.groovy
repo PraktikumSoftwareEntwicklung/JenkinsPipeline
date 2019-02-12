@@ -1,6 +1,13 @@
-def call() {
+import org.codehaus.groovy.util.ReleaseInfo
+
+def call(body) {
+    sh 'printenv'
+    execute_pipeline()
+}
+
+def execute_pipeline() {
 	pipeline {
-		agent any
+		agent none
 
 		options {
 			timeout(time: 30, unit: 'MINUTES')
@@ -24,14 +31,13 @@ def call() {
 				stages {
 					stage('load_cache') {
 						steps {
-							sh 'printenv'
 							sh 'mkdir /home/jenkinsbuild/.m2/'
 							sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
 						}
 					}
 					stage('build') {
 						steps {
-							sh 'mvn -B -DskipTests clean package'
+							sh 'mvn clean verify'
 						}
 					}
 					stage('save_cache') {
@@ -59,32 +65,17 @@ def call() {
 				stages {
 					stage('load_cache') {
 						steps {
-							sh 'printenv'
 							sh 'mkdir /home/jenkinsbuild/.m2/'
 							sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
 						}
 					}
 					stage('build') {
 						steps {
-							sh 'mvn -B -DskipTests clean package'
+							sh 'mvn clean verify'
 						}
 					}
 				}						
 			}
 		}
-		post {
-			always {
-				cleanWs()
-				dir("${env.WORKSPACE}@tmp") {
-				  deleteDir()
-				}
-				dir("${env.WORKSPACE}@script") {
-				  deleteDir()
-				}
-				dir("${env.WORKSPACE}@script@tmp") {
-				  deleteDir()
-				}
-			}
-		}			
 	}	
 }
