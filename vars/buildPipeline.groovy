@@ -160,7 +160,7 @@ def deploy() {
         sh "echo $BuildFilesFolder"
         sh "echo $MavenPwd"
         sh "mkdir $BuildFilesFolder"
-        //sh "docker cp $MavenContainerName:/ $BuildFilesFolder"
+        sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
         sh "du -h $BuildFilesFolder"
         sh "rm -rf $BuildFilesFolder"
     }
