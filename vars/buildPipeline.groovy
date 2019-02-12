@@ -120,7 +120,7 @@ def call() {
 }
 
 def execute_command(ex_env) {
-    node {
+    ex_env.node {
         ex_env.sh 'docker ps'
     }
 }
