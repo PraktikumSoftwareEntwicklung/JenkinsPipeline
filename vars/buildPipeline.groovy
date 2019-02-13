@@ -159,7 +159,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                 failOnError: true,
                 publishers: [
                     sshPublisherDesc(
-                        configName: "$SSH_CONFIG_NAME",
+                        configName: "SDQ Webserver Eclipse Update Sites",
                         transfers: [
                             sshTransfer(
                                 execCommand:
