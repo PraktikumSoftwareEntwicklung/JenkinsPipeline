@@ -1,28 +1,27 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
+final SSH_CONFIG_NAME = 'SDQ Webserver Eclipse Update Sites'
+
 def call() {
-    node {
-        def outp = sh (
-            script: 'printenv',
-            returnStdout: true
-        ).trim()
-        echo outp
-    }
+    // TODO: Get following variables with parameters:
+    String webserverDir = "home/deploy/writable"
+    String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
     
+    // TODO: Add project name and branch name
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
     def BuildFilesFolder = "/var/jenkins_home/workspace/BuildResult_" + env.BUILD_ID
     def MavenPwd = ""
 
     def tasks = [:]
     def doPostProcessing = false
-    def deployFinished = false
+    def postProcessingFinished = false
     
     tasks["Jenkins_Container"] = {
         while (!doPostProcessing) {
             sleep(1)
         }
-        deploy(BuildFilesFolder, MavenContainerName, MavenPwd)
-        deployFinished = true
+        deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation)
+        postProcessingFinished = true
     }
     
     tasks["Maven_Container"] = {
@@ -55,18 +54,6 @@ def call() {
                     stages {
                         stage('load_cache') {
                             steps {
-                                sh 'pwd'
-                                sh 'printenv'
-                                script {
-                                    MavenPwd = sh (
-                                        script: 'pwd',
-                                        returnStdout: true
-                                    ).trim()
-                                    doPostProcessing = true
-                                    while (!deployFinished) {
-                                        sleep(1)
-                                    }
-                                }
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
                             }
@@ -74,12 +61,16 @@ def call() {
                         stage('build') {
                             steps {
                                 sh 'mvn clean verify'
-                                /*script {
+                                script {
+                                    MavenPwd = sh (
+                                        script: 'pwd',
+                                        returnStdout: true
+                                    ).trim()
                                     doPostProcessing = true
-                                    while (!deployFinished) {
+                                    while (!postProcessingFinished) {
                                         sleep(1)
                                     }
-                                }*/
+                                }
                             }
                         }
                         stage('save_cache') {
@@ -96,7 +87,7 @@ def call() {
                         }
                     }
                 }
-                
+
                 stage('Build_Slave') {
                     agent {
                         docker {
@@ -128,14 +119,14 @@ def call() {
                     post {
                         always {
                             script {
-                                workspaceSlave = env.WORKSPACE							
+                                workspaceSlave = env.WORKSPACE
                             }
                         }
-                    }					
-                }					
+                    }
+                }
             }
             post {
-                always {				
+                always {
                     script {
                         cleanWorkspace("${env.WORKSPACE}")
                         if(env.GIT_BRANCH == 'master') {
@@ -148,20 +139,42 @@ def call() {
             }
         }
     }
-    
+
     parallel tasks
 }
 
-def deploy(BuildFilesFolder, MavenContainerName, MavenPwd) {
+def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation) {
     node {
-        sh "echo $BuildFilesFolder"
-        sh "echo $MavenPwd"
+        String absoluteWebserverDir = "updatesites.web.mdsd.tools/${webserverDir}"
+        String usl = ${BuildFilesFolder} + "/" + ${updateSiteLocation}
+
+        sh "echo $usl"
         MavenPwd = MavenPwd + "/."
-        sh "echo $MavenPwd"
-        sh "mkdir $BuildFilesFolder"
-        sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
-        sh "du -h $BuildFilesFolder"
-        sh "rm -rf $BuildFilesFolder"
+        sh "mkdir ${BuildFilesFolder}"
+        sh "docker cp ${MavenContainerName}:${MavenPwd} ${BuildFilesFolder}"
+        sh "du -h ${BuildFilesFolder}"    // TODO remove this
+        sh "rm -rf ${BuildFilesFolder}"
+
+        sshPublisher(
+            failOnError: true,
+            publishers: [
+                sshPublisherDesc(
+                    configName: SSH_CONFIG_NAME,
+                    transfers: [
+                        sshTransfer(
+                            execCommand:
+                            "mkdir -p ${absoluteWebserverDir}/nightly &&" +
+                            "rm -rf ${absoluteWebserverDir}/nightly/*"
+                        ),
+                        sshTransfer(
+                            sourceFiles: "${updateSiteLocation}/**/*",
+                            removePrefix: "$updateSiteLocation",
+                            remoteDirectory: "${webserverDir}/nightly/"
+                        )
+                    ]
+                )
+            ]
+        )
     }
 }
 
