@@ -1,6 +1,6 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
-final SSH_CONFIG_NAME = 'SDQ Webserver Eclipse Update Sites'
+def SSH_CONFIG_NAME = "SDQ Webserver Eclipse Update Sites"
 
 def call() {
     // TODO: Get following variables with parameters:
@@ -159,7 +159,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                 failOnError: true,
                 publishers: [
                     sshPublisherDesc(
-                        configName: SSH_CONFIG_NAME,
+                        configName: "$SSH_CONFIG_NAME",
                         transfers: [
                             sshTransfer(
                                 execCommand:
