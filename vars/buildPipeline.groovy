@@ -167,8 +167,8 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                             "rm -rf $absoluteWebserverDir/nightly/*"
                         ),
                         sshTransfer(
-                            sourceFiles: "$updateSiteLocation/**/*",
-                            removePrefix: "$updateSiteLocation",
+                            sourceFiles: "$usl/**/*",
+                            removePrefix: "$usl",
                             remoteDirectory: "$webserverDir/nightly/"
                         )
                     ]
