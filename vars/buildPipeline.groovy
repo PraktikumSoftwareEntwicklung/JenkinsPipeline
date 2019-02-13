@@ -177,6 +177,8 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
             )
         } catch (err) {
             sh "echo 'An error occured!'"
+            String errMsg = err.getMessage()
+            sh "echo $errMsg"
             /*currentBuild.result = 'FAILURE'
             if (err instanceof hudson.AbortException && err.getMessage().contains('script returned exit code 143')) {
                 currentBuild.result = 'ABORTED'
