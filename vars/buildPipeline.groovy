@@ -57,7 +57,8 @@ def call() {
                                 script {
                                     sh "echo Test"
                                     String absoluteWebserverDir = "updatesites.web.mdsd.tools/$webserverDir"
-                                    String usl = $BuildFilesFolder + "/" + $updateSiteLocation
+                                    String usl = "$BuildFilesFolder/$updateSiteLocation"
+                                    sh "echo $usl"
                                 }
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
