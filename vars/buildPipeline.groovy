@@ -18,7 +18,7 @@ def call() {
     
     tasks["Jenkins_Container"] = {
         while (!doPostProcessing) {
-            sleep(1)
+            sleep(5)
         }
         deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation)
         postProcessingFinished = true
@@ -54,12 +54,6 @@ def call() {
                     stages {
                         stage('load_cache') {
                             steps {
-                                script {
-                                    sh "echo Test"
-                                    String absoluteWebserverDir = "updatesites.web.mdsd.tools/$webserverDir"
-                                    String usl = "$BuildFilesFolder/$updateSiteLocation"
-                                    sh "echo $usl"
-                                }
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
                             }
@@ -74,7 +68,7 @@ def call() {
                                     ).trim()
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
-                                        sleep(1)
+                                        sleep(5)
                                     }
                                 }
                             }
@@ -151,15 +145,15 @@ def call() {
 
 def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation) {
     node {
-        String absoluteWebserverDir = "updatesites.web.mdsd.tools/${webserverDir}"
-        String usl = ${BuildFilesFolder} + "/" + ${updateSiteLocation}
+        String absoluteWebserverDir = "updatesites.web.mdsd.tools/$webserverDir"
+        String usl = "$BuildFilesFolder/$updateSiteLocation"
 
         sh "echo $usl"
         MavenPwd = MavenPwd + "/."
-        sh "mkdir ${BuildFilesFolder}"
-        sh "docker cp ${MavenContainerName}:${MavenPwd} ${BuildFilesFolder}"
-        sh "du -h ${BuildFilesFolder}"    // TODO remove this
-        sh "rm -rf ${BuildFilesFolder}"
+        sh "mkdir $BuildFilesFolder"
+        sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
+        sh "du -h $BuildFilesFolder"    // TODO remove this
+        sh "rm -rf $BuildFilesFolder"
 
         sshPublisher(
             failOnError: true,
@@ -169,13 +163,13 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                     transfers: [
                         sshTransfer(
                             execCommand:
-                            "mkdir -p ${absoluteWebserverDir}/nightly &&" +
-                            "rm -rf ${absoluteWebserverDir}/nightly/*"
+                            "mkdir -p $absoluteWebserverDir/nightly &&" +
+                            "rm -rf $absoluteWebserverDir/nightly/*"
                         ),
                         sshTransfer(
-                            sourceFiles: "${updateSiteLocation}/**/*",
+                            sourceFiles: "$updateSiteLocation/**/*",
                             removePrefix: "$updateSiteLocation",
-                            remoteDirectory: "${webserverDir}/nightly/"
+                            remoteDirectory: "$webserverDir/nightly/"
                         )
                     ]
                 )
