@@ -153,28 +153,41 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
         sh "du -h $BuildFilesFolder"    // TODO remove this
-        sh "rm -rf $BuildFilesFolder"
 
-        sshPublisher(
-            failOnError: true,
-            publishers: [
-                sshPublisherDesc(
-                    configName: SSH_CONFIG_NAME,
-                    transfers: [
-                        sshTransfer(
-                            execCommand:
-                            "mkdir -p $absoluteWebserverDir/nightly &&" +
-                            "rm -rf $absoluteWebserverDir/nightly/*"
-                        ),
-                        sshTransfer(
-                            sourceFiles: "$usl/**/*",
-                            removePrefix: "$usl",
-                            remoteDirectory: "$webserverDir/nightly/"
-                        )
-                    ]
-                )
-            ]
-        )
+        try {
+            sshPublisher(
+                failOnError: true,
+                publishers: [
+                    sshPublisherDesc(
+                        configName: SSH_CONFIG_NAME,
+                        transfers: [
+                            sshTransfer(
+                                execCommand:
+                                "mkdir -p $absoluteWebserverDir/nightly &&" +
+                                "rm -rf $absoluteWebserverDir/nightly/*"
+                            ),
+                            sshTransfer(
+                                sourceFiles: "$usl/**/*",
+                                removePrefix: "$usl",
+                                remoteDirectory: "$webserverDir/nightly/"
+                            )
+                        ]
+                    )
+                ]
+            )
+        } catch (err) {
+            sh "echo 'An error occured!'"
+            /*currentBuild.result = 'FAILURE'
+            if (err instanceof hudson.AbortException && err.getMessage().contains('script returned exit code 143')) {
+                currentBuild.result = 'ABORTED'
+            }
+            if (err instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException && err.causes.size() == 0) {
+                currentBuild.result = 'ABORTED'
+            }
+            throw err*/
+        }
+        
+        sh "rm -rf $BuildFilesFolder"
     }
 }
 
