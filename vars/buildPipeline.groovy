@@ -1,9 +1,5 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
-def BuildFilesFolder = "/var/jenkins_home/workspace/deleteThisFolder"
-def MavenContainerName = "Unkown_Container_Name"
-def MavenPwd = ""
-
 def call() {
     node {
         def outp = sh (
@@ -13,8 +9,9 @@ def call() {
         echo outp
     }
     
-    MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
-    BuildFilesFolder = "/var/jenkins_home/workspace/BuildResult_" + env.BUILD_ID
+    def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
+    def BuildFilesFolder = "/var/jenkins_home/workspace/BuildResult_" + env.BUILD_ID
+    def MavenPwd = ""
 
     def tasks = [:]
     def doPostProcessing = false
@@ -24,7 +21,7 @@ def call() {
         while (!doPostProcessing) {
             sleep(1)
         }
-        deploy()
+        deploy(BuildFilesFolder, MavenContainerName, MavenPwd)
         deployFinished = true
     }
     
@@ -155,7 +152,7 @@ def call() {
     parallel tasks
 }
 
-def deploy() {
+def deploy(BuildFilesFolder, MavenContainerName, MavenPwd) {
     node {
         sh "echo $BuildFilesFolder"
         sh "echo $MavenPwd"
