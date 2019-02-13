@@ -54,6 +54,11 @@ def call() {
                     stages {
                         stage('load_cache') {
                             steps {
+                                script {
+                                    sh "echo Test"
+                                    String absoluteWebserverDir = "updatesites.web.mdsd.tools/${webserverDir}"
+                                    String usl = ${BuildFilesFolder} + "/" + ${updateSiteLocation}
+                                }
                                 sh 'mkdir /home/jenkinsbuild/.m2/'
                                 sh 'cp -r /home/jenkinsbuild/tmp_cache/. /home/jenkinsbuild/.m2/'
                             }
