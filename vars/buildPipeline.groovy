@@ -3,7 +3,8 @@
 def call() {
     // TODO: Get following variables with parameters:
     String sshConfigName = "updatesites.web.mdsd.tools"
-    String absoluteWebserverDir = "/home/deploy/writable/simulizar"
+    String absoluteWebserverDir = "/home/deploy/writable"
+    Strign webserverDir = "simulizar"
     String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
     
     // TODO: Add project name and branch name
@@ -19,7 +20,7 @@ def call() {
         while (!doPostProcessing) {
             sleep(5)
         }
-        deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, updateSiteLocation, sshConfigName)
+        deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, webserverDir, updateSiteLocation, sshConfigName)
         postProcessingFinished = true
     }
     
@@ -142,8 +143,8 @@ def call() {
     parallel tasks
 }
 
-def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, updateSiteLocation, sshConfigName) {
-    node {
+def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, webserverDir, updateSiteLocation, sshConfigName) {
+    node {    
         // TODO: move /$updateSiteLocation to 'docker cp'
         String usl = "$BuildFilesFolder/$updateSiteLocation"
 
@@ -161,12 +162,14 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir,
                         transfers: [
                             sshTransfer(
                                 execCommand:
-                                "mkdir -p $absoluteWebserverDir/nightly &&" +
-                                "rm -rf $absoluteWebserverDir/nightly/*"
+                                "mkdir -p $absoluteWebserverDir/$webserverDir/nightly &&" +
+                                "rm -rf $absoluteWebserverDir/$webserverDir/nightly/*"
                             ),
                             sshTransfer(
                                 sourceFiles: "$usl/**/*",
+                                cleanRemote: true,
                                 removePrefix: "$usl",
+                                remoteDirectory: "$webserverDir/nightly"
                             )
                         ]
                     )
