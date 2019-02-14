@@ -171,7 +171,8 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                                 "rm -rf $absoluteWebserverDir/nightly/*"
                             ),
                             sshTransfer(
-                                sourceFiles: "$usl/artifacts.jar",
+                                sourceFiles: "/bin/bash",
+				cleanRemote: true,
                                 //removePrefix: "$usl",
                                 remoteDirectory: "./"
                             )
