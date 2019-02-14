@@ -60,7 +60,7 @@ def call() {
                         }
                         stage('build') {
                             steps {
-                                sh 'mvn clean verify'
+                                //sh 'mvn clean verify'
                                 script {
                                     MavenPwd = sh (
                                         script: 'pwd',
@@ -166,10 +166,11 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir,
                                 "rm -rf $absoluteWebserverDir/$webserverDir/nightly/*"
                             ),
                             sshTransfer(
-                                sourceFiles: "$usl/**/*",
+                                //sourceFiles: "$usl/**/*",
+				sourceFiles: "",
                                 cleanRemote: true,
                                 removePrefix: "$usl",
-                                remoteDirectory: "$webserverDir/nightly"
+                                //remoteDirectory: "$webserverDir/nightly"
                             )
                         ]
                     )
