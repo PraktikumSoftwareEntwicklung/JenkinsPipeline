@@ -147,7 +147,8 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
     node {
         //String absoluteWebserverDir = "updatesites.web.mdsd.tools/$webserverDir"
 	String absoluteWebserverDir = "/home/deploy/writable/simulizar"
-        String usl = "$BuildFilesFolder/$updateSiteLocation"
+        //String usl = "$BuildFilesFolder/$updateSiteLocation"
+	String usl = "$BuildFilesFolder"
 
         sh "echo $usl"
         MavenPwd = MavenPwd + "/."
