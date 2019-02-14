@@ -1,10 +1,9 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
-def SSH_CONFIG_NAME = "SDQ Webserver Eclipse Update Sites"
-
 def call() {
     // TODO: Get following variables with parameters:
-    String webserverDir = "home/deploy/writable"
+    String sshConfigName = "updatesites.web.mdsd.tools"
+    String absoluteWebserverDir = "/home/deploy/writable/simulizar"
     String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
     
     // TODO: Add project name and branch name
@@ -20,7 +19,7 @@ def call() {
         while (!doPostProcessing) {
             sleep(5)
         }
-        deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation)
+        deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, updateSiteLocation, sshConfigName)
         postProcessingFinished = true
     }
     
@@ -60,7 +59,7 @@ def call() {
                         }
                         stage('build') {
                             steps {
-                                //sh 'mvn clean verify'
+                                sh 'mvn clean verify'
                                 script {
                                     MavenPwd = sh (
                                         script: 'pwd',
@@ -143,29 +142,22 @@ def call() {
     parallel tasks
 }
 
-def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation) {
+def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, updateSiteLocation, sshConfigName) {
     node {
-        //String absoluteWebserverDir = "updatesites.web.mdsd.tools/$webserverDir"
-	String absoluteWebserverDir = "/home/deploy/writable/simulizar"
-        //String usl = "$BuildFilesFolder/$updateSiteLocation"
-	String usl = "$BuildFilesFolder"
+        // TODO: move /$updateSiteLocation to 'docker cp'
+        String usl = "$BuildFilesFolder/$updateSiteLocation"
 
         sh "echo $usl"
         MavenPwd = MavenPwd + "/."
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
-        sh "du -h $usl"    // TODO remove this
-	sh "ls -la $usl/"
-	sh "whoami"
-	sh "pwd"
 
         try {
             sshPublisher(
                 failOnError: true,
                 publishers: [
                     sshPublisherDesc(
-                        configName: "updatesites.web.mdsd.tools",
-			verbose: true,
+                        configName: "$sshConfigName",
                         transfers: [
                             sshTransfer(
                                 execCommand:
@@ -174,9 +166,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                             ),
                             sshTransfer(
                                 sourceFiles: "$usl/**/*",
-				//cleanRemote: true,
-                                //removePrefix: "$usl",
-                                //remoteDirectory: "./"
+                                removePrefix: "$usl",
                             )
                         ]
                     )
