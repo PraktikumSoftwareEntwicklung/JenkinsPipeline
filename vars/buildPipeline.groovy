@@ -4,7 +4,7 @@ def call() {
     // TODO: Get following variables with parameters:
     String sshConfigName = "updatesites.web.mdsd.tools"
     String absoluteWebserverDir = "/home/deploy/writable"
-    Strign webserverDir = "simulizar"
+    String webserverDir = "simulizar"
     String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
     
     // TODO: Add project name and branch name
