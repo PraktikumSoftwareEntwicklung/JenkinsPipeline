@@ -154,7 +154,8 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
         sh "du -h $BuildFilesFolder"    // TODO remove this
-	sh "ls $usl/"
+	sh "ls -la $usl/"
+	sh "whoami"
 
         try {
             sshPublisher(
