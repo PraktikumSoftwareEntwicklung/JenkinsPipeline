@@ -9,7 +9,7 @@ def call() {
     
     // TODO: Add project name and branch name
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
-    def BuildFilesFolder = "/var/jenkins_home/workspace/BuildResult_" + env.BUILD_ID
+    def BuildFilesFolder = "BuildResult_" + env.BUILD_ID
     def MavenPwd = ""
 
     def tasks = [:]
