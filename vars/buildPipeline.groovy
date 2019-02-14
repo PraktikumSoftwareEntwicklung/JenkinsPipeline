@@ -60,7 +60,7 @@ def call() {
                         }
                         stage('build') {
                             steps {
-                                sh 'mvn clean verify'
+                                //sh 'mvn clean verify'
                                 script {
                                     MavenPwd = sh (
                                         script: 'pwd',
@@ -153,7 +153,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
         MavenPwd = MavenPwd + "/."
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
-        sh "du -h $BuildFilesFolder"    // TODO remove this
+        sh "du -h $usl"    // TODO remove this
 	sh "ls -la $usl/"
 	sh "whoami"
 
@@ -171,10 +171,10 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                                 "rm -rf $absoluteWebserverDir/nightly/*"
                             ),
                             sshTransfer(
-                                sourceFiles: "/bin/bash",
-				cleanRemote: true,
+                                sourceFiles: "$usl/**/*",
+				//cleanRemote: true,
                                 //removePrefix: "$usl",
-                                remoteDirectory: "./"
+                                //remoteDirectory: "./"
                             )
                         ]
                     )
