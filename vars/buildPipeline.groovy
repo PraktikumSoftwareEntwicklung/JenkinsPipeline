@@ -154,6 +154,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
         sh "mkdir $BuildFilesFolder"
         sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
         sh "du -h $BuildFilesFolder"    // TODO remove this
+	sh "ls $usl/"
 
         try {
             sshPublisher(
@@ -161,6 +162,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                 publishers: [
                     sshPublisherDesc(
                         configName: "updatesites.web.mdsd.tools",
+			verbose: true,
                         transfers: [
                             sshTransfer(
                                 execCommand:
