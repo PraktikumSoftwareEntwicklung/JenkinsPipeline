@@ -146,7 +146,7 @@ def call() {
 def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateSiteLocation) {
     node {
         //String absoluteWebserverDir = "updatesites.web.mdsd.tools/$webserverDir"
-	String absoluteWebserverDir = "/home/deploy/writable/$webserverDir"
+	String absoluteWebserverDir = "/home/deploy/writable/simulizar"
         String usl = "$BuildFilesFolder/$updateSiteLocation"
 
         sh "echo $usl"
@@ -172,7 +172,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
                             sshTransfer(
                                 sourceFiles: "$usl/**/*",
                                 removePrefix: "$usl",
-                                remoteDirectory: "$webserverDir/nightly/"
+                                remoteDirectory: "simulizar/nightly/"
                             )
                         ]
                     )
