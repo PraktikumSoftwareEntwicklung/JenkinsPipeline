@@ -167,7 +167,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir,
                             ),
                             sshTransfer(
                                 //sourceFiles: "$usl/**/*",
-				sourceFiles: "",
+				sourceFiles: "/something",
                                 cleanRemote: true,
                                 removePrefix: "$usl",
                                 //remoteDirectory: "$webserverDir/nightly"
