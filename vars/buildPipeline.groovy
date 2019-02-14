@@ -157,6 +157,7 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, webserverDir, updateS
         sh "du -h $usl"    // TODO remove this
 	sh "ls -la $usl/"
 	sh "whoami"
+	sh "pwd"
 
         try {
             sshPublisher(
