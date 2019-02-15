@@ -2,10 +2,10 @@
 
 def call() {
     // TODO: Get following variables with parameters:
-    //String sshConfigName = "updatesites.web.mdsd.tools"
-    //String absoluteWebserverDir = "/home/deploy/writable"
-    //String webserverDir = "simulizar"
-    //String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
+    String sshConfigName = "updatesites.web.mdsd.tools"
+    String absoluteWebserverDir = "/home/deploy/writable"
+    String webserverDir = "simulizar"
+    String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
     
     // TODO: Add project name and branch name
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
@@ -30,9 +30,9 @@ def call() {
             
             parameters {
                 string defaultValue: 'updatesites.web.mdsd.tools', description: '', name: 'sshConfigName', trim: false
-				string absoluteWebserverDir: '/home/deploy/writable', description: '', name: 'sshConfigName', trim: false
-				string webserverDir: 'simulizar', description: '', name: 'sshConfigName', trim: false
-				string updateSiteLocation: 'releng/org.palladiosimulator.simulizar.updatesite/target/repository', description: '', name: 'sshConfigName', trim: false
+		string absoluteWebserverDir: '/home/deploy/writable', description: '', name: 'sshConfigName', trim: false
+		string webserverDir: 'simulizar', description: '', name: 'sshConfigName', trim: false
+		string updateSiteLocation: 'releng/org.palladiosimulator.simulizar.updatesite/target/repository', description: '', name: 'sshConfigName', trim: false
             }
 
             options {
