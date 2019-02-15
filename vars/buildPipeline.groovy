@@ -29,11 +29,14 @@ def call() {
             agent any
             
             parameters {
-                string (defaultValue: 'updatesites.web.mdsd.tools', description: '', name: 'sshConfigName', trim: true)
-		string (absoluteWebserverDir: '/home/deploy/writable', description: '', name: 'sshConfigName', trim: true)
-		string (webserverDir: 'simulizar', description: '', name: 'sshConfigName', trim: true)
-		string (updateSiteLocation: 'releng/org.palladiosimulator.simulizar.updatesite/target/repository', description: '', name: 'sshConfigName', trim: true)
-            }
+		  text defaultValue: '''updatesites.web.mdsd.tools
+		/home/deploy/writable
+		simulizar
+		releng/org.palladiosimulator.simulizar.updatesite/target/repository''', description: '''sshConfigName
+		absoluteWebserverDir
+		webserverDir
+		updateSiteLocation''', name: 'Deploy Parameters'
+	    }
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
