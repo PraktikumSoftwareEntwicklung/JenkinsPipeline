@@ -124,19 +124,7 @@ def call() {
                         }
                     }
                 }
-            }
-            post {
-                always {
-                    script {
-                        cleanWorkspace("${env.WORKSPACE}")
-                        if(env.GIT_BRANCH == 'master') {
-                            cleanWorkspace(workspaceMaster)
-                        } else {
-                            cleanWorkspace(workspaceSlave)
-                        }
-                    }
-                }
-            }
+            }            
         }
     }
 
