@@ -106,7 +106,12 @@ def call() {
                         }
                     }                 
                 }
-            }            
+            }
+			post {
+				always {
+					emailext body: 'Test Email', recipientProviders: [developers()], subject: 'Build'
+				}
+			}
         }
     }
 
