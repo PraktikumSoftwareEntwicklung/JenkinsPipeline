@@ -26,17 +26,7 @@ def call() {
     
     tasks["Maven_Container"] = {
         pipeline {
-            agent any
-            
-            parameters {
-		  text defaultValue: '''updatesites.web.mdsd.tools
-		/home/deploy/writable
-		simulizar
-		releng/org.palladiosimulator.simulizar.updatesite/target/repository''', description: '''sshConfigName
-		absoluteWebserverDir
-		webserverDir
-		updateSiteLocation''', name: 'Deploy Parameters'
-	    }
+            agent any            
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
