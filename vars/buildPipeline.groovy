@@ -26,7 +26,11 @@ def call() {
     
     tasks["Maven_Container"] = {
         pipeline {
-            agent any            
+            agent any
+            
+            parameters {
+                booleanParam(defaultValue: true, description: '', name: 'userFlag')
+            }
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
