@@ -26,11 +26,7 @@ def call() {
     
     tasks["Maven_Container"] = {
         pipeline {
-            agent any
-            environment {
-                workspaceMaster = ''
-                workspaceSlave = ''
-            }
+            agent any            
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
@@ -79,13 +75,6 @@ def call() {
                             }
                         }
                     }
-                    post {
-                        always {
-                            script {
-                                workspaceMaster = env.WORKSPACE	
-                            }
-                        }
-                    }
                 }
 
                 stage('Build_Slave') {
@@ -115,14 +104,7 @@ def call() {
                                 sh 'mvn clean verify'
                             }
                         }
-                    }
-                    post {
-                        always {
-                            script {
-                                workspaceSlave = env.WORKSPACE
-                            }
-                        }
-                    }
+                    }                 
                 }
             }            
         }
@@ -181,17 +163,3 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir,
     }
 }
 
-def cleanWorkspace(workspaceDir) {
-	dir(workspaceDir) {
-	  deleteDir()
-	}
-	dir(workspaceDir + "@tmp") {
-	  deleteDir()
-	}
-	dir(workspaceDir + "@script") {
-	  deleteDir()
-	}
-	dir(workspaceDir + "@script@tmp") {
-	  deleteDir()
-	}
-}
