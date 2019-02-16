@@ -26,7 +26,11 @@ def call() {
     
     tasks["Maven_Container"] = {
         pipeline {
-            agent any            
+            agent any
+		
+	    environment {
+		GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
+	    }
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
