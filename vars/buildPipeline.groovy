@@ -1,11 +1,11 @@
 //import org.codehaus.groovy.util.ReleaseInfo
 
-def call() {
-    // TODO: Get following variables with parameters:
-    String sshConfigName = "updatesites.web.mdsd.tools"
-    String absoluteWebserverDir = "/home/deploy/writable"
-    String webserverDir = "simulizar"
-    String updateSiteLocation = "releng/org.palladiosimulator.simulizar.updatesite/target/repository"
+def call(body) {
+
+	def config = [:]
+	body.resolveStrategy = Closure.DELEGATE_FIRST
+	body.delegate = config
+	body()
     
     // TODO: Add project name and branch name
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
@@ -13,24 +13,31 @@ def call() {
     def MavenPwd = ""
 
     def tasks = [:]
+	def doRelease = false
     def doPostProcessing = false
     def postProcessingFinished = false
     
-    tasks["Jenkins_Container"] = {
+    tasks["Jenkins_Container"] = {		
         while (!doPostProcessing) {
             sleep(5)
         }
-        deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, webserverDir, updateSiteLocation, sshConfigName)
+		if(doRelease) {
+			deploy(config,BuildFilesFolder, MavenContainerName, MavenPwd)
+		}       
         postProcessingFinished = true
     }
     
     tasks["Maven_Container"] = {
         pipeline {
             agent any
+			
+			parameters {
+				booleanParam (name: 'RELEASE', defaultValue: false, description: 'Set true for Release')
+			}
 		
-	    environment {
-		GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
-	    }
+			environment {
+				GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
+			}
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
@@ -66,6 +73,7 @@ def call() {
                                         script: 'pwd',
                                         returnStdout: true
                                     ).trim()
+									doRelease = params.RELEASE
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
                                         sleep(5)
@@ -111,21 +119,31 @@ def call() {
                     }                 
                 }
             }
-			post {
-				always {
-					emailext body: 'Test Email', recipientProviders: [developers()], subject: 'Build'
-				}
-			}
         }
     }
 
     parallel tasks
 }
 
-def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir, webserverDir, updateSiteLocation, sshConfigName) {
-    node {    
-        // TODO: move /$updateSiteLocation to 'docker cp'
-        String usl = "$BuildFilesFolder/$updateSiteLocation"
+def deploy(config, BuildFilesFolder, MavenContainerName, MavenPwd) {
+    node {
+	def mandatoryParameters = ['sshConfigName', 'absoluteWebserverDir', 'webserverDir', 'updateSiteLocation']
+	for (mandatoryParameter in mandatoryParameters) {
+		if (!config.containsKey(mandatoryParameter) || config.get(mandatoryParameter).toString().trim().isEmpty()) {
+			error "Missing mandatory parameter $mandatoryParameter"
+		}			
+	}
+
+	boolean skipCodeQuality = config.containsKey('skipCodeQuality') && config.get('skipCodeQuality').toString().trim().toBoolean()
+	boolean skipNotification = config.containsKey('skipNotification') && config.get('skipNotification').toString().trim().toBoolean()
+
+	sh "echo ${config.sshConfigName}"
+	sh "echo ${config.absoluteWebserverDir}"
+	sh "echo ${config.webserverDir}"
+	sh "echo ${config.updateSiteLocation}"
+		
+		// TODO: move /$updateSiteLocation to 'docker cp'
+        String usl = "$BuildFilesFolder/${config.updateSiteLocation}"
 
         sh "echo $usl"
         MavenPwd = MavenPwd + "/."
@@ -137,18 +155,18 @@ def deploy(BuildFilesFolder, MavenContainerName, MavenPwd, absoluteWebserverDir,
                 failOnError: true,
                 publishers: [
                     sshPublisherDesc(
-                        configName: "$sshConfigName",
+                        configName: "${config.sshConfigName}",
                         transfers: [
                             /*sshTransfer(
                                 execCommand:
-                                "mkdir -p $absoluteWebserverDir/$webserverDir/nightly &&" +
-                                "rm -rf $absoluteWebserverDir/$webserverDir/nightly/*"
+                                "mkdir -p ${config.absoluteWebserverDir}/${config.webserverDir}/nightly &&" +
+                                "rm -rf ${config.absoluteWebserverDir}/${config.webserverDir}/nightly/*"
                             ),*/
                             sshTransfer(
                                 sourceFiles: "$usl/**/*",
                                 cleanRemote: true,
                                 removePrefix: "$usl",
-                                remoteDirectory: "$webserverDir/nightly"
+                                remoteDirectory: "${config.webserverDir}/nightly"
                             )
                         ]
                     )
