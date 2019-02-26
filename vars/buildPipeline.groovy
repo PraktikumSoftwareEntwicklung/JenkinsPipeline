@@ -202,7 +202,7 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
                                     "rm -rf ${config.absoluteWebserverDir}/${config.webserverDir}/releases/latest &&" +
                                     "rm -rf ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion &&" +
                                     "mkdir -p ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion &&" +
-                                    "cp -a ${config.absoluteWebserverDir}/${config.webserverDir}/nightly/* ${config.absoluteWebserverDir}/releases/$releaseVersion/ &&" +
+                                    "cp -a ${config.absoluteWebserverDir}/${config.webserverDir}/nightly/* ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion/ &&" +
                                     "ln -s ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion ${config.absoluteWebserverDir}/${config.webserverDir}/releases/latest"
                                 )
                             ]
