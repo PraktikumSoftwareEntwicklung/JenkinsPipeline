@@ -205,7 +205,6 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
             // archive:
             archiveArtifacts "$usl/**/*"
 
-            boolean skipCodeQuality = config.containsKey('skipCodeQuality') && config.get('skipCodeQuality').toString().trim().toBoolean()
             if (!skipCodeQuality) {
                 sh "echo 'Publish JavaDoc'"
                 publishHTML([
