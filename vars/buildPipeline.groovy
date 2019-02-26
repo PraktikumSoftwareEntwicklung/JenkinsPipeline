@@ -6,7 +6,7 @@ def call(body) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
     body()
-    
+
     // TODO: Add project name and branch name
     def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
     def BuildFilesFolder = "BuildResult_" + env.BUILD_ID
@@ -18,7 +18,7 @@ def call(body) {
     def releaseVersion = "0.1"
     def doPostProcessing = false
     def postProcessingFinished = false
-    
+
     tasks["Jenkins_Container"] = {
         while (!doPostProcessing) {
             sleep(5)
@@ -199,11 +199,11 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
                             transfers: [
                                 sshTransfer(
                                     execCommand:
-                                    "rm -rf $absoluteWebserverDir/${config.webserverDir}/releases/latest &&" +
-                                    "rm -rf $absoluteWebserverDir/${config.webserverDir}/releases/$releaseVersion &&" +
-                                    "mkdir -p $absoluteWebserverDir/${config.webserverDir}/releases/$releaseVersion &&" +
-                                    "cp -a $absoluteWebserverDir/${config.webserverDir}/nightly/* $absoluteWebserverDir/releases/$releaseVersion/ &&" +
-                                    "ln -s $absoluteWebserverDir/${config.webserverDir}/releases/$releaseVersion $absoluteWebserverDir/${config.webserverDir}/releases/latest"
+                                    "rm -rf ${config.absoluteWebserverDir}/${config.webserverDir}/releases/latest &&" +
+                                    "rm -rf ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion &&" +
+                                    "mkdir -p ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion &&" +
+                                    "cp -a ${config.absoluteWebserverDir}/${config.webserverDir}/nightly/* ${config.absoluteWebserverDir}/releases/$releaseVersion/ &&" +
+                                    "ln -s ${config.absoluteWebserverDir}/${config.webserverDir}/releases/$releaseVersion ${config.absoluteWebserverDir}/${config.webserverDir}/releases/latest"
                                 )
                             ]
                         )
