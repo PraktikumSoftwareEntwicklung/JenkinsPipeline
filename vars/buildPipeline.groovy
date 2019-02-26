@@ -132,6 +132,13 @@ def call(body) {
                     }
                 }
             }
+            post {
+                always {
+                    // in case of a failure during the build
+                    doDeploy = false
+                    doPostProcessing = true
+                }
+            }
         }
     }
 
