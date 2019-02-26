@@ -147,7 +147,7 @@ def call(body) {
     parallel tasks
 }
 
-def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion) {
+def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doReleaseBuild, releaseVersion) {
     node {
         def mandatoryParameters = ['sshConfigName', 'absoluteWebserverDir', 'webserverDir', 'updateSiteLocation']
         for (mandatoryParameter in mandatoryParameters) {
