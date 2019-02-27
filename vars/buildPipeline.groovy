@@ -34,7 +34,8 @@ def call(body) {
             agent any
 
             parameters {
-                booleanParam (name: 'RELEASE', defaultValue: false, description: 'Set true for Release')
+                booleanParam (name: 'Release', defaultValue: false, description: 'Set true for Release')
+                string (defaultValue: '0.0.0', description: 'set Version of Release', name: 'ReleaseVersion', trim: true)
             }
 
             environment {
@@ -75,7 +76,8 @@ def call(body) {
                                         script: 'pwd',
                                         returnStdout: true
                                     ).trim()
-                                    doRelease = params.RELEASE
+                                    doRelease = params.Release
+                                    releaseVersion = params.ReleaseVersion
                                     doDeploy = true
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
