@@ -161,9 +161,6 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         boolean skipCodeQuality = config.containsKey('skipCodeQuality') && config.get('skipCodeQuality').toString().trim().toBoolean()
         boolean skipNotification = config.containsKey('skipNotification') && config.get('skipNotification').toString().trim().toBoolean()
 
-        // TODO remove this
-        skipCodeQuality = true
-
         sh "echo ${config.sshConfigName}"
         sh "echo ${config.absoluteWebserverDir}"
         sh "echo ${config.webserverDir}"
