@@ -20,7 +20,7 @@ def call(body) {
     def postProcessingFinished = false
 
     tasks["Jenkins_Container"] = {
-	sendEmailNotification()      
+	    sendEmailNotification() 
         while (!doPostProcessing) {
             sleep(5)
         }
@@ -272,11 +272,19 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
 def sendEmailNotification () {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
+	def recipientsMail = ''
+	def GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
 	
-	notify('FAILED', '$DEFAULT_RECIPIENTS', 'failed')
-	
-	if (currentResult == 'FAILURE' && env.GIT_BRANCH == 'master') {
-		notify('FAILED', '$DEFAULT_RECIPIENTS', 'failed')
+	if(env.GIT_BRANCH == 'master') {
+		recipientsMail = GIT_COMMIT_EMAIL + '; $DEFAULT_RECIPIENTS'	
+	} else {
+		recipientsMail = GIT_COMMIT_EMAIL
+	}	
+	notify('FAILED', recipientsMail, 'failed')
+	if (currentResult == 'FAILURE') {
+		notify('FAILED', recipientsMail, 'failed')
+	} else if (currentResult == 'SUCCESS' && previouslyFailed()) {
+		notify('FIXED', recipientsMail, 'fixed previous build error')
 	}
 }
 
@@ -284,4 +292,18 @@ def notify (token, recipients, verb) {
 	emailext body: "The build of ${JOB_NAME} #${BUILD_NUMBER} ${verb}.\nPlease visit ${BUILD_URL} for details.",  
 		to: recipients, 
 		subject: "${token}: build of ${JOB_NAME} #${BUILD_NUMBER}"	
+}
+
+def previouslyFailed() {
+	for (buildObject = currentBuild.previousBuild; buildObject != null; buildObject = buildObject.previousBuild) {
+		if (buildObject.result == null) {
+			continue
+		}
+		if (buildObject.result == 'FAILURE') {
+			return true
+		}
+		if (buildObject.resultIsBetterOrEqualTo('UNSTABLE')) {
+			return false
+		}
+	}
 }
