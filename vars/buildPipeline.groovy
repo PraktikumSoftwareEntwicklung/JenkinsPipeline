@@ -15,7 +15,7 @@ def call(body) {
     def tasks = [:]
     def doDeploy = false
     def doRelease = false
-    def releaseVersion = ""
+    def releaseVersion = params.Release
     def doPostProcessing = false
     def postProcessingFinished = false
 
