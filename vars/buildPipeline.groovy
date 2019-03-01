@@ -20,7 +20,7 @@ def call(body) {
     def postProcessingFinished = false
 
     tasks["Jenkins_Container"] = {
-	sendEmailNotification(${currentBuild.result})
+	sendEmailNotification(currentBuild.result)
         while (!doPostProcessing) {
             sleep(5)
         }
