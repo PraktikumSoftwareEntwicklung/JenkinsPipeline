@@ -19,7 +19,8 @@ def call(body) {
     def doPostProcessing = false
     def postProcessingFinished = false
 
-    tasks["Jenkins_Container"] = {	
+    tasks["Jenkins_Container"] = {
+	sendEmailNotification()      
         while (!doPostProcessing) {
             sleep(5)
         }
@@ -27,7 +28,7 @@ def call(body) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true	
-	sendEmailNotification("${currentBuild.result}")    
+	sendEmailNotification()    
     }
 
     tasks["Maven_Container"] = {
@@ -268,6 +269,19 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "rm -rf $BuildFilesFolder"
     }
 }
-def sendEmailNotification (buildResult) {
-	emailext body: 'Test',  to: '$DEFAULT_RECIPIENTS', subject: buildResult
+def sendEmailNotification () {
+	def currentResult = currentBuild.result ?: 'SUCCESS'
+	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
+	
+	notify('FAILED', '$DEFAULT_RECIPIENTS', 'failed')
+	
+	if (currentResult == 'FAILURE' && env.GIT_BRANCH == 'master') {
+		notify('FAILED', '$DEFAULT_RECIPIENTS', 'failed')
+	}
+}
+
+def notify (token, recipients, verb) {
+	emailext body: "The build of ${JOB_NAME} #${BUILD_NUMBER} ${verb}.\nPlease visit ${BUILD_URL} for details.",  
+		to: recipients, 
+		subject: "${token}: build of ${JOB_NAME} #${BUILD_NUMBER}"	
 }
