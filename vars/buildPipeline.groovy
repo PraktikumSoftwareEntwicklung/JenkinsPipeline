@@ -28,7 +28,7 @@ def call(body) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true	
-	sendEmailNotification()    
+	sendEmailNotification(commitEmail)    
     }
 
     tasks["Maven_Container"] = {
@@ -277,7 +277,7 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "rm -rf $BuildFilesFolder"
     }
 }
-def sendEmailNotification () {
+def sendEmailNotification (commitEmail) {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
