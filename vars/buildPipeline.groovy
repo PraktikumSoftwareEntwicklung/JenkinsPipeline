@@ -23,13 +23,11 @@ def call(body) {
         while (!doPostProcessing) {
             sleep(5)
         }
-	sh "echo ${doRelease}"
-        sh "echo ${releaseVersion}"
         if(doDeploy) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true		
-		sendEmailNotification(currentBuild.result)
+	sendEmailNotification(currentBuild.result)
     }
 
     tasks["Maven_Container"] = {
