@@ -14,8 +14,6 @@ def call(body) {
 
     def tasks = [:]
     def doDeploy = false
-    def doRelease = params.Release
-    def releaseVersion = params.ReleaseVersion
     def doPostProcessing = false
     def postProcessingFinished = false
 
@@ -24,7 +22,7 @@ def call(body) {
             sleep(5)
         }
         if(doDeploy) {
-            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
+            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, params.Release, params.ReleaseVersio)
         }
         postProcessingFinished = true
     }
