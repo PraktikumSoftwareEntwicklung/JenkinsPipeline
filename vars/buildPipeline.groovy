@@ -14,20 +14,21 @@ def call(body) {
 
     def tasks = [:]
     def doDeploy = false
+	def doRelease = false
+	def releaseVersion = ""
     def doPostProcessing = false
     def postProcessingFinished = false
 
     tasks["Jenkins_Container"] = {
-        sh "echo ${params.Release}"
-		sh "echo ${params.params.ReleaseVersion}"
-        
         while (!doPostProcessing) {
             sleep(5)
         }
         if(doDeploy) {
-            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, params.Release, params.ReleaseVersion)
+            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true
+	
+        sh "echo ${currentBuild.result}"
     }
 
     tasks["Maven_Container"] = {
@@ -76,7 +77,9 @@ def call(body) {
                                     MavenPwd = sh (
                                         script: 'pwd',
                                         returnStdout: true
-                                    ).trim()                             
+                                    ).trim()
+									doRelease = params.Release
+									releaseVersion = params.ReleaseVersion
                                     doDeploy = true
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
@@ -264,7 +267,5 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         }
 
         sh "rm -rf $BuildFilesFolder"
-        sh "echo ${currentBuild.result}"
-        sh "echo ${currentBuild}"
     }
 }
