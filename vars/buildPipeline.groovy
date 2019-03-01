@@ -299,7 +299,6 @@ def sendEmailNotification (commitEmail, branch) {
 
 def notify (token, recipients, verb) {
 	emailext body: "The build of ${JOB_NAME} #${BUILD_NUMBER} ${verb}.\nPlease visit ${BUILD_URL} for details.",
-		recipientProviders: [upstreamDevelopers()],
 		to: recipients, 
 		subject: "${token}: build of ${JOB_NAME} #${BUILD_NUMBER}"	
 }
