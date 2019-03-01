@@ -19,15 +19,15 @@ def call(body) {
     def doPostProcessing = false
     def postProcessingFinished = false
 
-    tasks["Jenkins_Container"] = {
-	sendEmailNotification("${currentBuild.result}")
+    tasks["Jenkins_Container"] = {	
         while (!doPostProcessing) {
             sleep(5)
         }
         if(doDeploy) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
-        postProcessingFinished = true			
+        postProcessingFinished = true	
+	sendEmailNotification("${currentBuild.result}")    
     }
 
     tasks["Maven_Container"] = {
@@ -269,5 +269,5 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
     }
 }
 def sendEmailNotification (buildResult) {
-	emailext body: 'Test',  to: 'undxb@student.kit.edu', subject: buildResult
+	emailext body: 'Test',  to: $DEFAULT_RECIPIENTS, subject: buildResult
 }
