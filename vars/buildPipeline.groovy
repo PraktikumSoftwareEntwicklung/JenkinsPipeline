@@ -269,5 +269,5 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
     }
 }
 def sendEmailNotification (buildResult) {
-	emailext body: 'Test',  to: $DEFAULT_RECIPIENTS, subject: buildResult
+	emailext body: 'Test',  to: '$DEFAULT_RECIPIENTS', subject: buildResult
 }
