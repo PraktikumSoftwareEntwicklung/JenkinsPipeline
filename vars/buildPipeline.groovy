@@ -7,8 +7,9 @@ def call(body) {
     body.delegate = config
     body()
 
-    sh "printenv"
-    
+    node {
+        sh "printenv"
+    }
     def UniqueBuildIdentifier = "" + env.GIT_COMMIT + "_" + env.BUILD_ID
     def MavenContainerName = "MyMavenContainer_" + UniqueBuildIdentifier
     def BuildFilesFolder = "BuildResult_" + UniqueBuildIdentifier
