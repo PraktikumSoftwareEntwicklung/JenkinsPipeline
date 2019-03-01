@@ -7,7 +7,7 @@ def call(body) {
     body.delegate = config
     body()
 
-    def UniqueBuildIdentifier = env.GIT_COMMIT + "_" + env.BUILD_ID
+    def UniqueBuildIdentifier = "" + env.GIT_COMMIT + "_" + env.BUILD_ID
     def MavenContainerName = "MyMavenContainer_" + UniqueBuildIdentifier
     def BuildFilesFolder = "BuildResult_" + UniqueBuildIdentifier
     def MavenPwd = ""
