@@ -18,9 +18,9 @@ def call(body) {
     def releaseVersion = ""
     def doPostProcessing = false
     def postProcessingFinished = false
+    def commitEmail = ""
 
-    tasks["Jenkins_Container"] = {
-	    sendEmailNotification() 
+    tasks["Jenkins_Container"] = {	    
         while (!doPostProcessing) {
             sleep(5)
         }
@@ -48,6 +48,16 @@ def call(body) {
                 timeout(time: 30, unit: 'MINUTES')
             }
             stages {
+	        stage('set Parameter') {
+		    steps {
+		        script {
+			    doRelease = params.Release
+			    releaseVersion = params.ReleaseVersion
+			    commitEmail = env.GIT_COMMIT_EMAIL	
+			}
+		    }
+	        } 
+			    
                 stage('Build_Master') {
                     agent {
                         docker {
@@ -78,8 +88,6 @@ def call(body) {
                                         script: 'pwd',
                                         returnStdout: true
                                     ).trim()
-				    doRelease = params.Release
-				    releaseVersion = params.ReleaseVersion
                                     doDeploy = true
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
@@ -273,12 +281,11 @@ def sendEmailNotification () {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
-	def GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
 	
 	if(env.GIT_BRANCH == 'master') {
-		recipientsMail = GIT_COMMIT_EMAIL + '; $DEFAULT_RECIPIENTS'	
+		recipientsMail = commitEmail + '; $DEFAULT_RECIPIENTS'	
 	} else {
-		recipientsMail = GIT_COMMIT_EMAIL
+		recipientsMail = commitEmail
 	}	
 	notify('FAILED', recipientsMail, 'failed')
 	if (currentResult == 'FAILURE') {
