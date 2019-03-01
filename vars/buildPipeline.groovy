@@ -14,8 +14,8 @@ def call(body) {
 
     def tasks = [:]
     def doDeploy = false
-    def doRelease = false
-    def releaseVersion = params.Release
+    def doRelease = params.Release
+    def releaseVersion = params.ReleaseVersion
     def doPostProcessing = false
     def postProcessingFinished = false
 
@@ -75,9 +75,7 @@ def call(body) {
                                     MavenPwd = sh (
                                         script: 'pwd',
                                         returnStdout: true
-                                    ).trim()
-                                    doRelease = params.Release
-                                    releaseVersion = params.ReleaseVersion
+                                    ).trim()                             
                                     doDeploy = true
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
