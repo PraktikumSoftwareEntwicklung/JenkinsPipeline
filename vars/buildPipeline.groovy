@@ -19,6 +19,7 @@ def call(body) {
     def doPostProcessing = false
     def postProcessingFinished = false
     def commitEmail = ""
+    def currentBranch = ""
 
     tasks["Jenkins_Container"] = {	    
         while (!doPostProcessing) {
@@ -28,7 +29,7 @@ def call(body) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true	
-	sendEmailNotification(commitEmail, env.GIT_BRANCH)    
+	sendEmailNotification(commitEmail, currentBranch)    
     }
 
     tasks["Maven_Container"] = {
@@ -53,7 +54,8 @@ def call(body) {
 		        script {
 			    doRelease = params.Release
 			    releaseVersion = params.ReleaseVersion
-			    commitEmail = env.GIT_COMMIT_EMAIL	
+			    commitEmail = env.GIT_COMMIT_EMAIL
+			    currentBranch = env.GIT_BRANCH
 			}
 		    }
 	        } 
