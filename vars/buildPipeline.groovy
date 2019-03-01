@@ -261,5 +261,7 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         }
 
         sh "rm -rf $BuildFilesFolder"
+        sh "echo ${currentBuild.result}"
+        sh "echo ${currentBuild}"
     }
 }
