@@ -269,5 +269,5 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
     }
 }
 def sendEmailNotification (buildResult) {
-	emailext body: 'Test', recipientProviders: [culprits(), upstreamDevelopers()], subject: 'Test'
+	emailext body: 'Test',  to: 'undxb@student.kit.edu', subject: buildResult
 }
