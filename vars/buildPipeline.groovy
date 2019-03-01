@@ -7,15 +7,15 @@ def call(body) {
     body.delegate = config
     body()
 
-    // TODO: Add project name and branch name
-    def MavenContainerName = "MyMavenContainer_" + env.BUILD_ID
-    def BuildFilesFolder = "BuildResult_" + env.BUILD_ID
+    def UniqueBuildIdentifier = env.GIT_COMMIT + "_" + env.BUILD_ID
+    def MavenContainerName = "MyMavenContainer_" + UniqueBuildIdentifier
+    def BuildFilesFolder = "BuildResult_" + UniqueBuildIdentifier
     def MavenPwd = ""
 
     def tasks = [:]
     def doDeploy = false
     def doRelease = false
-    def releaseVersion = "0.1"
+    def releaseVersion = ""
     def doPostProcessing = false
     def postProcessingFinished = false
 
@@ -157,6 +157,10 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
                 error "Missing mandatory parameter $mandatoryParameter"
             }
         }
+        
+        if (doReleaseBuild && releaseVersion == "") {
+            error "To do a release build it is mandatory to specify a release version"
+        }
 
         boolean skipCodeQuality = config.containsKey('skipCodeQuality') && config.get('skipCodeQuality').toString().trim().toBoolean()
         boolean skipNotification = config.containsKey('skipNotification') && config.get('skipNotification').toString().trim().toBoolean()
@@ -166,7 +170,6 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "echo ${config.webserverDir}"
         sh "echo ${config.updateSiteLocation}"
 
-        // TODO: move /$updateSiteLocation to 'docker cp'
         String usl = "$BuildFilesFolder/${config.updateSiteLocation}"
 
         sh "echo $usl"
