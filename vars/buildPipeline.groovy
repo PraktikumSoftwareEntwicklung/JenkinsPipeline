@@ -18,11 +18,14 @@ def call(body) {
     def postProcessingFinished = false
 
     tasks["Jenkins_Container"] = {
+        sh "echo ${params.Release}"
+		sh "echo ${params.params.ReleaseVersion}"
+        
         while (!doPostProcessing) {
             sleep(5)
         }
         if(doDeploy) {
-            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, params.Release, params.ReleaseVersio)
+            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, params.Release, params.ReleaseVersion)
         }
         postProcessingFinished = true
     }
