@@ -20,14 +20,14 @@ def call(body) {
     def postProcessingFinished = false
 
     tasks["Jenkins_Container"] = {
+	sendEmailNotification(currentBuild.result)
         while (!doPostProcessing) {
             sleep(5)
         }
         if(doDeploy) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
-        postProcessingFinished = true		
-	sendEmailNotification(currentBuild.result)
+        postProcessingFinished = true			
     }
 
     tasks["Maven_Container"] = {
