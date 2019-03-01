@@ -28,7 +28,7 @@ def call(body) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true	
-	sendEmailNotification(commitEmail)    
+	sendEmailNotification(commitEmail, env.GIT_BRANCH)    
     }
 
     tasks["Maven_Container"] = {
@@ -277,16 +277,16 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "rm -rf $BuildFilesFolder"
     }
 }
-def sendEmailNotification (commitEmail) {
+def sendEmailNotification (commitEmail, branch) {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
 	
-	if(env.GIT_BRANCH == 'master') {
+	if(branch == 'master') {
 		recipientsMail = commitEmail + '; $DEFAULT_RECIPIENTS'	
 	} else {
 		recipientsMail = commitEmail
-	}	
+	}
 	notify('FAILED', recipientsMail, 'failed')
 	if (currentResult == 'FAILURE') {
 		notify('FAILED', recipientsMail, 'failed')
