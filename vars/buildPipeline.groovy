@@ -58,7 +58,7 @@ def call(body) {
 			    doRelease = params.Release
 			    releaseVersion = params.ReleaseVersion
 			    commitEmail = env.GIT_COMMIT_EMAIL
-			    comiter = env. GIT_COMMITTER
+			    committer = env. GIT_COMMITTER
 			    currentBranch = env.GIT_BRANCH
 			}
 		    }
