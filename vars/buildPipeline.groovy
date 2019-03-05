@@ -21,7 +21,8 @@ def call(body) {
     def commitEmail = ""
     def currentBranch = ""
 
-    tasks["Jenkins_Container"] = {	    
+    tasks["Jenkins_Container"] = {
+	    sendEmailNotification(commitEmail, currentBranch)   
         while (!doPostProcessing) {
             sleep(5)
         }
