@@ -23,7 +23,7 @@ def call(body) {
     def committer = ""
     def currentBranch = ""
 
-    tasks["Jenkins_Container"] = { 
+    tasks["Jenkins_Container"] = {
         while (!doPostProcessing) {
             sleep(5)
         }
