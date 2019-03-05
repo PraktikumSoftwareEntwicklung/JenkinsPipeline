@@ -43,6 +43,7 @@ def call(body) {
 
             environment {
                 GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
+		GIT_COMMITER = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%an\'')}""".trim()
             }
 
             options {
