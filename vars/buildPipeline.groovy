@@ -22,7 +22,6 @@ def call(body) {
     def currentBranch = ""
 
     tasks["Jenkins_Container"] = { 
-	sendEmailNotification(commitEmail, currentBranch) 
         while (!doPostProcessing) {
             sleep(5)
         }
@@ -58,7 +57,6 @@ def call(body) {
 			    commitEmail = env.GIT_COMMIT_EMAIL
 			    currentBranch = env.GIT_BRANCH
 			}
-			    sh "echo ${env.CHANGE_AUTHOR}"
 		    }
 	        } 			    
                 stage('Build_Master') {
