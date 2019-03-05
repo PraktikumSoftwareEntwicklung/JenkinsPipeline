@@ -1,4 +1,5 @@
 //import org.codehaus.groovy.util.ReleaseInfo
+import hudson.model.User
 
 def call(body) {
 
@@ -19,6 +20,7 @@ def call(body) {
     def doPostProcessing = false
     def postProcessingFinished = false
     def commitEmail = ""
+    def committer = ""
     def currentBranch = ""
 
     tasks["Jenkins_Container"] = { 
@@ -29,7 +31,7 @@ def call(body) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true	
-	sendEmailNotification(commitEmail, currentBranch)    
+	sendEmailNotification(commitEmail, comitter, currentBranch)    
     }
 
     tasks["Maven_Container"] = {
@@ -43,7 +45,7 @@ def call(body) {
 
             environment {
                 GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
-		GIT_COMMITER = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%an\'')}""".trim()
+		GIT_COMMITTER = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%an\'')}""".trim()
             }
 
             options {
@@ -56,6 +58,7 @@ def call(body) {
 			    doRelease = params.Release
 			    releaseVersion = params.ReleaseVersion
 			    commitEmail = env.GIT_COMMIT_EMAIL
+			    comiter = env. GIT_COMMITTER
 			    currentBranch = env.GIT_BRANCH
 			}
 		    }
@@ -279,10 +282,15 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "rm -rf $BuildFilesFolder"
     }
 }
-def sendEmailNotification (commitEmail, branch) {
+def sendEmailNotification (commitEmail, committer, branch) {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
+	def userEmail = User.getById(committer ,false).getProperty(hudson.tasks.Mailer.UserProperty.class).getAddress()
+	
+	if(userEmail != "") {
+		commitEmail = userEmail
+	}
 	
 	if(branch == 'master') {
 		recipientsMail = commitEmail + '; $DEFAULT_RECIPIENTS'	
