@@ -57,7 +57,6 @@ def call(body) {
 			    commitEmail = env.GIT_COMMIT_EMAIL
 			    currentBranch = env.GIT_BRANCH
 			}
-			sh "printenv"
 		    }
 	        } 			    
                 stage('Build_Master') {
@@ -300,6 +299,7 @@ def sendEmailNotification (commitEmail, branch) {
 def notify (token, recipients, verb) {
 	emailext body: "The build of ${JOB_NAME} #${BUILD_NUMBER} ${verb}.\nPlease visit ${BUILD_URL} for details.",
 		to: recipients,
+		recipientProviders: [[$class: 'DevelopersRecipientProvider']],
 		subject: "${token}: build of ${JOB_NAME} #${BUILD_NUMBER}"	
 }
 
