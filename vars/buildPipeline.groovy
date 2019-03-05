@@ -31,7 +31,7 @@ def call(body) {
             postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
         }
         postProcessingFinished = true	
-	sendEmailNotification(commitEmail, comitter, currentBranch)    
+	sendEmailNotification(commitEmail, committer, currentBranch)    
     }
 
     tasks["Maven_Container"] = {
@@ -288,7 +288,7 @@ def sendEmailNotification (commitEmail, committer, branch) {
 	def recipientsMail = ''
 	def userEmail = User.getById(committer ,false).getProperty(hudson.tasks.Mailer.UserProperty.class).getAddress()
 	
-	if(userEmail != "") {
+	if(userEmail != null) {
 		commitEmail = userEmail
 	}
 	
