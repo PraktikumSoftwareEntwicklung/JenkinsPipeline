@@ -297,7 +297,7 @@ def sendEmailNotification (commitEmail, committer, branch) {
 	} else {
 		recipientsMail = commitEmail
 	}
-	notify('FAILED', recipientsMail, 'failed')
+
 	if (currentResult == 'FAILURE') {
 		notify('FAILED', recipientsMail, 'failed')
 	} else if (currentResult == 'SUCCESS' && previouslyFailed()) {
