@@ -58,6 +58,7 @@ def call(body) {
 			    commitEmail = env.GIT_COMMIT_EMAIL
 			    currentBranch = env.GIT_BRANCH
 			}
+			    sh "echo ${env.CHANGE_AUTHOR}"
 		    }
 	        } 			    
                 stage('Build_Master') {
