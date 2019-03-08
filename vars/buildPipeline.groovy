@@ -177,6 +177,10 @@ def call(body) {
     postProcessingFinished = true	
     sendEmailNotification(commitEmail, committer, currentBranch)    
     //parallel tasks
+        
+    node {
+        sh "rm -rf $TmpBuildFiles"
+    }
 }
 
 def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doReleaseBuild, releaseVersion) {
