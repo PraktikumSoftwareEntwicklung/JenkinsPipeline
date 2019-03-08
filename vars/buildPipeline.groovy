@@ -10,12 +10,12 @@ def call(body) {
 
     def UniqueBuildIdentifier = env.BUILD_TAG
     def MavenContainerName = "MyMavenContainer_" + UniqueBuildIdentifier
+    def TmpBuildFiles = "/var/buildfiles/" + UniqueBuildIdentifier
     def BuildFilesFolder = "BuildResult_" + UniqueBuildIdentifier
     def MavenPwd = ""
 
     node {
-        sh "printenv"
-        sh "pwd"
+        sh "mkdir $TmpBuildFiles"
     }
 
     def tasks = [:]
@@ -28,7 +28,7 @@ def call(body) {
     def committer = ""
     def currentBranch = ""
 
-    tasks["Jenkins_Container"] = {
+    /*tasks["Jenkins_Container"] = {
         while (!doPostProcessing) {
             sleep(5)
         }
@@ -37,9 +37,9 @@ def call(body) {
         }
         postProcessingFinished = true	
 	sendEmailNotification(commitEmail, committer, currentBranch)    
-    }
+    }*/
 
-    tasks["Maven_Container"] = {
+    //tasks["Maven_Container"] = {
         pipeline {
             agent any
 
@@ -98,13 +98,17 @@ def call(body) {
                                         script: 'pwd',
                                         returnStdout: true
                                     ).trim()
-                                    sh "cp -r $pwd/. /home/jenkinsbuild/buildfiles"
                                     doDeploy = true
                                     doPostProcessing = true
-                                    while (!postProcessingFinished) {
-                                        sleep(5)
-                                    }
+                                    //while (!postProcessingFinished) {
+                                    //    sleep(5)
+                                    //}
                                 }
+                            }
+                        }
+                        stage('save_buildfiles') {
+                            steps {
+                                sh "cp -r $pwd/. /home/jenkinsbuild/buildfiles"
                             }
                         }
                         stage('save_cache') {
@@ -165,9 +169,14 @@ def call(body) {
                 }
             }
         }
-    }
+    //}
 
-    parallel tasks
+    if(doDeploy) {
+        postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
+    }
+    postProcessingFinished = true	
+    sendEmailNotification(commitEmail, committer, currentBranch)    
+    //parallel tasks
 }
 
 def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doReleaseBuild, releaseVersion) {
@@ -196,7 +205,8 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "echo $usl"
         MavenPwd = MavenPwd + "/."
         sh "mkdir $BuildFilesFolder"
-        sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
+        //sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
+        sh "cp -r $TmpBuildFiles $BuildFilesFolder"
 
         try {
             // deploy:
