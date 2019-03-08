@@ -14,7 +14,8 @@ def call(body) {
     def MavenPwd = ""
 
     node {
-        sh "mkdir /var/buildfiles/$UniqueBuildIdentifier"
+        sh "printenv"
+        sh "pwd"
     }
 
     def tasks = [:]
