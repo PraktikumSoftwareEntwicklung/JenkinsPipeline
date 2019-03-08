@@ -13,6 +13,10 @@ def call(body) {
     def BuildFilesFolder = "BuildResult_" + UniqueBuildIdentifier
     def MavenPwd = ""
 
+    node {
+        sh "mkdir /var/buildfiles/$UniqueBuildIdentifier"
+    }
+
     def tasks = [:]
     def doDeploy = false
     def doRelease = false
@@ -67,7 +71,7 @@ def call(body) {
                     agent {
                         docker {
                             image 'custom_maven:latest'
-                            args "-v /media/data/empty_maven_folder/:/root/.m2:ro -v /media/data/m2-cache/:/home/jenkinsbuild/tmp_cache -m 4G --storage-opt size=20G --network proxy --name $MavenContainerName"
+                            args "-v /media/docker2/$UniqueBuildIdentifier/:/home/jenkinsbuild/buildfiles -v /media/data/empty_maven_folder/:/root/.m2:ro -v /media/data/m2-cache/:/home/jenkinsbuild/tmp_cache -m 4G --storage-opt size=20G --network proxy --name $MavenContainerName"
                         }
                     }
                     when {
@@ -93,6 +97,7 @@ def call(body) {
                                         script: 'pwd',
                                         returnStdout: true
                                     ).trim()
+                                    sh "cp -r $pwd/. /home/jenkinsbuild/buildfiles"
                                     doDeploy = true
                                     doPostProcessing = true
                                     while (!postProcessingFinished) {
