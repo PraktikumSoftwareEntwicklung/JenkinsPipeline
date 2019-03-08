@@ -178,8 +178,12 @@ def call(body) {
     sendEmailNotification(commitEmail, committer, currentBranch)    
     //parallel tasks
         
-    node {
-        sh "rm -rf $TmpBuildFiles"
+    post {
+        always {
+            node {
+                sh "rm -rf $TmpBuildFiles"
+            }       
+        }
     }
 }
 
