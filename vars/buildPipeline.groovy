@@ -22,24 +22,11 @@ def call(body) {
     def doDeploy = false
     def doRelease = false
     def releaseVersion = ""
-    def doPostProcessing = false
-    def postProcessingFinished = false
     def commitEmail = ""
     def committer = ""
     def currentBranch = ""
 
-    /*tasks["Jenkins_Container"] = {
-        while (!doPostProcessing) {
-            sleep(5)
-        }
-        if(doDeploy) {
-            postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
-        }
-        postProcessingFinished = true	
-	sendEmailNotification(commitEmail, committer, currentBranch)    
-    }*/
-
-    //tasks["Maven_Container"] = {
+    try {
         pipeline {
             agent any
 
@@ -50,24 +37,24 @@ def call(body) {
 
             environment {
                 GIT_COMMIT_EMAIL = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%ae\'')}""".trim()
-		GIT_COMMITTER = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%an\'')}""".trim()
+                GIT_COMMITTER = """${sh(returnStdout: true,script: 'git --no-pager show -s --format=\'%an\'')}""".trim()
             }
 
             options {
                 timeout(time: 30, unit: 'MINUTES')
             }
             stages {
-	        stage('set_Parameter') {
-		    steps {
-		        script {
-			    doRelease = params.Release
-			    releaseVersion = params.ReleaseVersion
-			    commitEmail = env.GIT_COMMIT_EMAIL
-			    committer = env. GIT_COMMITTER
-			    currentBranch = env.GIT_BRANCH
-			}
-		    }
-	        } 			    
+                stage('set_Parameter') {
+                    steps {
+                        script {
+                            doRelease = params.Release
+                            releaseVersion = params.ReleaseVersion
+                            commitEmail = env.GIT_COMMIT_EMAIL
+                            committer = env. GIT_COMMITTER
+                            currentBranch = env.GIT_BRANCH
+                        }
+                    }
+                } 			    
                 stage('Build_Master') {
                     agent {
                         docker {
@@ -99,10 +86,6 @@ def call(body) {
                                         returnStdout: true
                                     ).trim()
                                     doDeploy = true
-                                    doPostProcessing = true
-                                    //while (!postProcessingFinished) {
-                                    //    sleep(5)
-                                    //}
                                 }
                             }
                         }
@@ -144,45 +127,29 @@ def call(body) {
                         stage('build') {
                             steps {
                                 sh 'mvn clean verify'
-                                script {
-                                    MavenPwd = sh (
-                                        script: 'pwd',
-                                        returnStdout: true
-                                    ).trim()
-                                    doPostProcessing = true
-                                    while (!postProcessingFinished) {
-                                        sleep(5)
-                                    }
-                                }
                             }
                         }
                     }
                 }
             }
-            post {
-                always {
-                    // in case of a failure during the build
-                    script {
-                        doDeploy = false
-                        doPostProcessing = true
-                    }
-                }
-            }
         }
-    //}
 
-    if(doDeploy) {
-        postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
-    }
-    postProcessingFinished = true	
-    sendEmailNotification(commitEmail, committer, currentBranch)    
-    //parallel tasks
+        node {
+            if(doDeploy) {
+                postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
+            }
+            sendEmailNotification(commitEmail, committer, currentBranch)
+            sh "rm -rf $TmpBuildFiles"
+        }
         
-    post {
-        always {
-            node {
-                sh "rm -rf $TmpBuildFiles"
-            }       
+    } catch (err) {
+        node {
+            sh "rm -rf $TmpBuildFiles"
+            sh "echo 'An error occured!'"
+            String errMsg = err.getMessage()
+            sh "echo $errMsg"
+            currentBuild.result = 'FAILURE'
+            sendEmailNotification(commitEmail, committer, currentBranch)
         }
     }
 }
