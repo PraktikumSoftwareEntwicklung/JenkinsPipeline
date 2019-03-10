@@ -180,11 +180,9 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "echo $usl"
         MavenPwd = MavenPwd + "/."
         sh "mkdir $BuildFilesFolder"
-        //sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
-        sh "cp -r $TmpBuildFiles $BuildFilesFolder"
+        sh "cp -r $TmpBuildFiles/. $BuildFilesFolder/"
 	    sh "ls $TmpBuildFiles"
         sh "ls $BuildFilesFolder"
-        sh "du -h $BuildFilesFolder"
 
         try {
             // deploy:
@@ -280,10 +278,10 @@ def sendEmailNotification (commitEmail, committer, branch) {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
-	def userJenkins = User.getById(committer ,false)
+	def userEmail = User.getById(committer ,false).getProperty(hudson.tasks.Mailer.UserProperty.class).getAddress()
 	
-	if(userJenkins != null) {
-		commitEmail = userJenkins.getProperty(hudson.tasks.Mailer.UserProperty.class).getAddress()
+	if(userEmail != null) {
+		commitEmail = userEmail
 	}
 	
 	if(branch == 'master') {
