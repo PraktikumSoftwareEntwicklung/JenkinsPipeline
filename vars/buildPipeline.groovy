@@ -182,6 +182,9 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         sh "mkdir $BuildFilesFolder"
         //sh "docker cp $MavenContainerName:$MavenPwd $BuildFilesFolder"
         sh "cp -r $TmpBuildFiles $BuildFilesFolder"
+	    sh "ls $TmpBuildFiles"
+        sh "ls $BuildFilesFolder"
+        sh "du -h $BuildFilesFolder"
 
         try {
             // deploy:
