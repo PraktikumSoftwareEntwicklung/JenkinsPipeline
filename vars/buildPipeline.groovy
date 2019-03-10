@@ -1,4 +1,3 @@
-//import org.codehaus.groovy.util.ReleaseInfo
 import hudson.model.User
 
 def call(body) {
@@ -12,13 +11,11 @@ def call(body) {
     def MavenContainerName = "MyMavenContainer_" + UniqueBuildIdentifier
     def TmpBuildFiles = "/var/buildfiles/" + UniqueBuildIdentifier
     def BuildFilesFolder = "BuildResult_" + UniqueBuildIdentifier
-    def MavenPwd = ""
 
     node {
         sh "mkdir $TmpBuildFiles"
     }
 
-    def tasks = [:]
     def doDeploy = false
     def doRelease = false
     def releaseVersion = ""
@@ -81,17 +78,19 @@ def call(body) {
                             steps {
                                 sh 'mvn clean verify'
                                 script {
-                                    MavenPwd = sh (
-                                        script: 'pwd',
-                                        returnStdout: true
-                                    ).trim()
                                     doDeploy = true
                                 }
                             }
                         }
                         stage('save_buildfiles') {
                             steps {
-                                sh "cp -r $MavenPwd/. /home/jenkinsbuild/buildfiles/"
+                                script {
+                                    def MavenPwd = sh (
+                                        script: 'pwd',
+                                        returnStdout: true
+                                    ).trim()
+                                    sh "cp -r $MavenPwd/. /home/jenkinsbuild/buildfiles/"
+                                }
                             }
                         }
                         stage('save_cache') {
@@ -137,7 +136,7 @@ def call(body) {
         node {
             sh "echo 'Build finished. Start post processing'"
             if(doDeploy) {
-                postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion, TmpBuildFiles)
+                postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, doRelease, releaseVersion, TmpBuildFiles)
             }
             sendEmailNotification(commitEmail, committer, currentBranch)
             sh "rm -rf $TmpBuildFiles"
@@ -155,7 +154,7 @@ def call(body) {
     }
 }
 
-def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doReleaseBuild, releaseVersion, TmpBuildFiles) {
+def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, doReleaseBuild, releaseVersion, TmpBuildFiles) {
     node {
         def mandatoryParameters = ['sshConfigName', 'absoluteWebserverDir', 'webserverDir', 'updateSiteLocation']
         for (mandatoryParameter in mandatoryParameters) {
@@ -171,15 +170,8 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         boolean skipCodeQuality = config.containsKey('skipCodeQuality') && config.get('skipCodeQuality').toString().trim().toBoolean()
         boolean skipNotification = config.containsKey('skipNotification') && config.get('skipNotification').toString().trim().toBoolean()
 
-        sh "echo ${config.sshConfigName}"
-        sh "echo ${config.absoluteWebserverDir}"
-        sh "echo ${config.webserverDir}"
-        sh "echo ${config.updateSiteLocation}"
-
         String usl = "$BuildFilesFolder/${config.updateSiteLocation}"
 
-        sh "echo $usl"
-        MavenPwd = MavenPwd + "/."
         sh "mkdir $BuildFilesFolder"
         sh "cp -r $TmpBuildFiles/. $BuildFilesFolder/"
 
