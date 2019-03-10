@@ -136,7 +136,7 @@ def call(body) {
 
         node {
             if(doDeploy) {
-                postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion)
+                postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion, TmpBuildFiles)
             }
             sendEmailNotification(commitEmail, committer, currentBranch)
             sh "rm -rf $TmpBuildFiles"
@@ -154,7 +154,7 @@ def call(body) {
     }
 }
 
-def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doReleaseBuild, releaseVersion) {
+def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doReleaseBuild, releaseVersion, TmpBuildFiles) {
     node {
         def mandatoryParameters = ['sshConfigName', 'absoluteWebserverDir', 'webserverDir', 'updateSiteLocation']
         for (mandatoryParameter in mandatoryParameters) {
