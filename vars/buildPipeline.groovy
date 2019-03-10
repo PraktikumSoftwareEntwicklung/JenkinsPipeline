@@ -108,7 +108,7 @@ def call(body) {
                         }
                         stage('save_buildfiles') {
                             steps {
-                                sh "cp -r $pwd/. /home/jenkinsbuild/buildfiles"
+                                sh "cp -r $MavenPwd/. /home/jenkinsbuild/buildfiles/"
                             }
                         }
                         stage('save_cache') {
