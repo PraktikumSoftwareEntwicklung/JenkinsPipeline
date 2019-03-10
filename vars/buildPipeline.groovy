@@ -135,6 +135,7 @@ def call(body) {
         }
 
         node {
+            sh "echo 'Build finished. Start post processing'"
             if(doDeploy) {
                 postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenPwd, doRelease, releaseVersion, TmpBuildFiles)
             }
@@ -145,7 +146,7 @@ def call(body) {
     } catch (err) {
         node {
             sh "rm -rf $TmpBuildFiles"
-            sh "echo 'An error occured!'"
+            sh "echo 'An error occured during the build!'"
             String errMsg = err.getMessage()
             sh "echo $errMsg"
             currentBuild.result = 'FAILURE'
@@ -181,8 +182,6 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         MavenPwd = MavenPwd + "/."
         sh "mkdir $BuildFilesFolder"
         sh "cp -r $TmpBuildFiles/. $BuildFilesFolder/"
-	    sh "ls $TmpBuildFiles"
-        sh "ls $BuildFilesFolder"
 
         try {
             // deploy:
@@ -258,7 +257,8 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
             }
 
         } catch (err) {
-            sh "echo 'An error occured!'"
+		    sh "rm -rf $BuildFilesFolder"
+            sh "echo 'An error occured during post processing!'"
             String errMsg = err.getMessage()
             sh "echo $errMsg"
             currentBuild.result = 'FAILURE'
@@ -272,9 +272,11 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
         }
 
         sh "rm -rf $BuildFilesFolder"
+        sh "echo 'Post processing finished.'"
     }
 }
 def sendEmailNotification (commitEmail, committer, branch) {
+    sh "echo 'Send mail notification.'"
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
