@@ -280,10 +280,10 @@ def sendEmailNotification (commitEmail, committer, branch) {
 	def currentResult = currentBuild.result ?: 'SUCCESS'
 	def previousResult = currentBuild.previousBuild?.result ?: 'SUCCESS'
 	def recipientsMail = ''
-	def userEmail = User.getById(committer ,false).getProperty(hudson.tasks.Mailer.UserProperty.class).getAddress()
+	def userJenkins = User.getById(committer ,false)
 	
-	if(userEmail != null) {
-		commitEmail = userEmail
+	if(userJenkins != null) {
+		commitEmail = userJenkins.getProperty(hudson.tasks.Mailer.UserProperty.class).getAddress()
 	}
 	
 	if(branch == 'master') {
