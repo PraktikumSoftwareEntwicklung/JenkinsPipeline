@@ -257,7 +257,7 @@ def postProcessBuildResults(config, BuildFilesFolder, MavenContainerName, MavenP
             }
 
         } catch (err) {
-		    sh "rm -rf $BuildFilesFolder"
+            sh "rm -rf $BuildFilesFolder"
             sh "echo 'An error occured during post processing!'"
             String errMsg = err.getMessage()
             sh "echo $errMsg"
