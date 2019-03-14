@@ -29,7 +29,7 @@ def call(body) {
 
             parameters {
                 booleanParam (name: 'Release', defaultValue: false, description: 'Set true for Release')
-                string (defaultValue: '0.0.0', description: 'set Version of Release', name: 'ReleaseVersion', trim: true)
+                string (defaultValue: '', description: 'set Version of Release', name: 'ReleaseVersion', trim: true)
             }
 
             environment {
